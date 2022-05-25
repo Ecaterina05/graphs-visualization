@@ -1,0 +1,46 @@
+.card-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#loginButton {
+  justify-content: center;
+}
+
+button {
+  width: 50%;
+}
+
+#loginContainer {
+  justify-content: center
+}
+
+.alligned {
+  width: 75%;
+  margin: auto;
+}
+
+#cardHeader {
+  text-align: center;
+  font-size: xx-large;
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+}
+
+.p-float-label > label {
+  left: 1.5rem;
+}
+
+p {
+  text-align: center;
+}
+
+a {
+  color: teal;
+}
+
+.padding {
+  padding-bottom: 1rem;
+}

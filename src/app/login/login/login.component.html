@@ -1,0 +1,30 @@
+<div class="card-container">
+  <p-card [style]="{ width: '360px' }" styleClass="p-card-shadow">
+    <ng-template pTemplate="header">
+      <img alt="Card" src="assets/graphs.jpeg">
+    </ng-template>
+    <p id="cardHeader">Graphs Visualization</p>
+    <form [formGroup]="loginForm" class="auth-form" autocomplete="off" novalidate (ngSubmit)="submit()">
+      <div class="form-floating padding">
+          <input [ngClass]="{'is-invalid' : usernameError}" id="username" pInputText type="text" class="form-control" formControlName="username"
+          maxlength="500" autocomplete="off" placeholder="username" required/>
+          <label for="username">Nume utilizator</label>
+          <div class="invalid-feedback">Completați numele de utilizator!</div>
+      </div>
+      <div class="form-floating">
+        <input  [ngClass]="{'is-invalid' : passwordError}" id="password" pInputText type="password" class="form-control"
+        formControlName="password" maxlength="500" autocomplete="off"  placeholder="password" required/>
+        <label for="password">Parola</label>
+        <div class="invalid-feedback">Completați parola!</div>
+    </div>
+      <div id="loginButton" class="form-group row submit-row pt-4">
+        <button type="submit" class="ui-button-primary btn-block" pButton [label]="'Logheaza-te'">
+        </button>
+      </div>
+    </form>
+    <ng-template pTemplate="footer">
+      <p><a routerLink="/sign-up">Nu ai cont? Înscrie-te acum!</a></p>
+      <p *ngIf="failedLogin"><a routerLink="/sign-up">Ai uitat datele de conectare?</a></p>
+    </ng-template>
+  </p-card>
+</div>

@@ -1,0 +1,17 @@
+.card-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.padding {
+  padding-bottom: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.classButtons {
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+}

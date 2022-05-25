@@ -1,0 +1,55 @@
+<div class="card-container">
+  <p-card [style]="{ width: '400px' }" styleClass="p-card-shadow">
+    <form [formGroup]="signInForm" class="auth-form" autocomplete="off" novalidate (ngSubmit)="onSave()">
+        <div class="form-floating padding form-group row">
+            <input id="lastname" pInputText type="text" class="form-control" formControlName="lastname"
+                maxlength="500" autocomplete="off" placeholder="lastname" required
+                [ngClass]="{'is-invalid' : signInForm.get('lastname')?.invalid && signInForm.get('lastname')?.touched}"/>
+            <label for="lastname">Nume</label>
+            <div class="invalid-feedback">Numele este obligatoriu!</div>
+        </div>
+        <div class="form-floating padding form-group row">
+            <input id="firstname" pInputText type="text" class="form-control" formControlName="firstname"
+                maxlength="500" autocomplete="off" placeholder="firstname" required
+                [ngClass]="{'is-invalid' : signInForm.get('firstname')?.invalid && signInForm.get('firstname')?.touched}"/>
+            <label for="firstname">Prenume</label>
+            <div class="invalid-feedback">Prenumele este obligatoriu!</div>
+        </div>
+        <div class="form-floating padding form-group row">
+            <input id="username" pInputText type="text" class="form-control" formControlName="username"
+                maxlength="500" autocomplete="off" placeholder="username" required
+                [ngClass]="{'is-invalid' : signInForm.get('username')?.invalid && signInForm.get('username')?.touched}"/>
+            <label for="username">Nume utilizator</label>
+            <div class="invalid-feedback">Numele de utilizator este obligatoriu!</div>
+            <!-- <small id="usernameError" class="p-error">Numele de utilizator nu este disponibil.</small> -->
+        </div>
+        <div class="form-floating padding form-group row">
+            <input id="email" pInputText type="email" class="form-control login-user-input-email auth-input" formControlName="email"
+                maxlength="500" autocomplete="off" placeholder="email" required
+                [ngClass]="{'is-invalid' : signInForm.get('email')?.invalid && signInForm.get('email')?.touched}"/>
+            <label for="email">Email</label>
+            <div class="invalid-feedback">Email-ul este obligatoriu!</div>
+        </div>
+        <div class="form-floating padding form-group row">
+            <input id="password" pPassword type="text" id="pass" class="form-control auth-input input-password"
+                formControlName="password" maxlength="500" autocomplete="off" placeholder="password" required
+                [ngClass]="{'is-invalid' : signInForm.get('password')?.invalid && signInForm.get('password')?.touched}"/>
+            <label for="password">Parola</label>
+            <div class="invalid-feedback">Parola este obligatorie!</div>
+        </div>
+        <div class="form-floating padding form-group row">
+            <input id="confirmPassword" pPassword type="text" id="pass" class="form-control auth-input input-password"
+                formControlName="confirmPassword" maxlength="500" autocomplete="off" placeholder="confirmPassword" required
+                [ngClass]="{'is-invalid' : signInForm.get('confirmPassword')?.invalid && signInForm.get('confirmPassword')?.touched}"/>
+            <label for="confirmPassword">Confirmă parola</label>
+            <div class="invalid-feedback">Este obligatoriu să confirmați parola!</div>
+            <small *ngIf="signInForm.get('confirmPassword')?.errors?.['confirmedValidator']" id="confirmPasswordError" class="p-error">Parolele nu corespund.</small>
+        </div>
+        <div class="row classButtons">
+          <button pButton type="button" (click)="onCancel()" label="Cancel" class="p-button-secondary col m-2"></button>
+          <button pButton type="submit" [disabled]="signInForm.invalid" label="Save" class="p-button-success col m-2"></button>
+        </div>
+    </form>
+    <ng-template pTemplate="footer"> </ng-template>
+  </p-card>
+</div>
