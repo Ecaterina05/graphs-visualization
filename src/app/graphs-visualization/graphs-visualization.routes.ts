@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { GraphsVisualizationComponent } from './container/graphs-visualization/graphs-visualization.component';
+import { GraphsVisualizationComponent } from './container/graphs-visualization.component';
 
 @NgModule({
   imports: [

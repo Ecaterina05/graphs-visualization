@@ -13,6 +13,7 @@ import {PasswordModule} from 'primeng/password';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { TheoryComponent } from './graphs-visualization/components/theory/theory.component';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, SignUpComponent],
@@ -37,7 +38,11 @@ import { SignUpComponent } from './sign-up/sign-up.component';
       {
         path: 'graphs-visualization',
         loadChildren: () => import('src/app/graphs-visualization/graphs-visualization.module').then(mod => mod.GraphsVisualizationModule)
-      }
+      },
+      {
+        path: 'theory',
+        component: TheoryComponent
+      },
     ])
   ],
   providers: [],

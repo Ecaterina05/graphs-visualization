@@ -7,9 +7,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GraphsVisualizationComponent implements OnInit {
 
+  selected: string = 'Theory';
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  goToTheory() {
+    this.selected = 'Theory';
+  }
+
+  goToVisualization() {
+    this.selected = 'Visualization';
+  }
+
+  goToApplications() {
+    this.selected = 'Applications';
+  }
+
+  goToSaved() {
+    this.selected = 'Saved';
+  }
 }
