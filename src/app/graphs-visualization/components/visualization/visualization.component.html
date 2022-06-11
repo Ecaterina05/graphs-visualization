@@ -37,10 +37,13 @@
               <div class="row" style="justify-content: center;">
                 <p-inputNumber class="w-25" [(ngModel)]="value1" buttonLayout="vertical" inputId="value1">
                 </p-inputNumber>
-                <i class="pi pi-minus"></i>
+                <i class="pi pi-minus smallContainer"></i>
                 <p-inputNumber class="w-25" [(ngModel)]="value2" buttonLayout="vertical" inputId="value2">
                 </p-inputNumber>
-                <button pButton type="button" icon="pi pi-plus" (click)="addLink()"></button>
+                <p *ngIf="selectedGraphType2 ==='ponderat'" class="smallContainer">P:</p>
+                <p-inputNumber *ngIf="selectedGraphType2 ==='ponderat'" class="w-25" [(ngModel)]="pondere" buttonLayout="vertical" inputId="pondere">
+                </p-inputNumber>
+                <button [disabled]="!value1 || !value2" pButton type="button" icon="pi pi-plus" (click)="addLink()"></button>
               </div>
             </div>
           </div>
@@ -54,3 +57,4 @@
     </div>
   </p-panel>
 </div>
+<div id="alchemy" class="alchemy"></div>

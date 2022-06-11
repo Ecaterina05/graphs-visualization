@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
+import { Node } from '../common/node.model';
 
 @Component({
   selector: 'app-visualization',
@@ -11,11 +12,14 @@ export class VisualizationComponent implements OnInit {
   parent: any;
   linkType = '';
   readyToAddLink = false;
-  value1: any;
-  value2: any;
+  value1: number | undefined;
+  value2: number | undefined ;
+  pondere: number | undefined;
 
-  leftNode: number = 150;
-  topNode: number = 100;
+  nodesArray: Node[] = [];
+
+  leftNode!: number;
+  topNode!: number;
 
   nodesNumer: number = 0;
 
@@ -52,7 +56,7 @@ export class VisualizationComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.parent = document.getElementById("canvasContainer")
+    this.parent = document.getElementById("canvasContainer");
 
     var width = this.parent?.offsetWidth;
     var height = this.parent?.offsetHeight;
@@ -82,16 +86,32 @@ export class VisualizationComponent implements OnInit {
     return Math.random() * (max - min) + min;
   }
 
+  randomIntFromInterval(min : number, max : number) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
   addNode() {
     this.nodesNumer++;
     var nodeNumber = this.nodesNumer.toString();
 
-    // this.leftNode = this.leftNode + 150;
-    // this.topNode = this.topNode + 100;
+    var left = this.randomIntFromInterval(1,791);
+    var top = this.randomIntFromInterval(1,473);
+
+    this.nodesArray.forEach(node => {
+      if(Math.abs(node.left - left) <= 61) {
+        left = left + 61;
+      }
+      if(Math.abs(node.top - top) <= 61) {
+        top = top + 61;
+      }
+    });
+
+    this.leftNode = left;
+    this.topNode = top;
 
     var circle = new fabric.Circle({
       radius: 30,
-      fill: '#ccfff5',
+      fill: 'white',
       stroke: '#14B8A6',
       originX: 'center',
       originY: 'center'
@@ -109,22 +129,50 @@ export class VisualizationComponent implements OnInit {
       selectable: false
     });
 
+    this.nodesArray.push({
+      left: this.leftNode,
+      top: this.topNode,
+      label: this.nodesNumer,
+      color: 'white',
+      coordonates: group.oCoords
+    });
+
     this.canvas.add(group);
 
     if(this.canvas.getObjects().length == 2) {
       this.readyToAddLink = true;
     }
-
-    this.leftNode = this.leftNode + 150;
   }
 
   addLink() {
-    var objects = this.canvas.getObjects();
-    console.log(objects);
+    var x1_arrow, y1_arrow, x2_arrow, y2_arrow;
+    var x1, y1, x2, y2;
+    var first_node = this.nodesArray.find(node => node.label == this.value1);
+    var second_node = this.nodesArray.find(node => node.label == this.value2);
 
-    var line = new fabric.Line([objects[0].oCoords.mr.x, objects[0].oCoords.mr.y, objects[1].oCoords.ml.x, objects[1].oCoords.ml.y], {
+    if(first_node!.left < second_node!.left) {
+      x1 = first_node?.coordonates.mr.x;
+      y1 = first_node?.coordonates.mr.y;
+      x2 = second_node?.coordonates.ml.x;
+      y2 = second_node?.coordonates.ml.y;
+      x1_arrow = x1;
+      y1_arrow = y1;
+      x2_arrow = x2;
+      y2_arrow = y2;
+    } else {
+      x1 = second_node?.coordonates.mr.x;
+      y1 = second_node?.coordonates.mr.y;
+      x2 = first_node?.coordonates.ml.x;
+      y2 = first_node?.coordonates.ml.y;
+      x1_arrow = x2;
+      y1_arrow = y2;
+      x2_arrow = x1;
+      y2_arrow = y1;
+    }
+
+    var line = new fabric.Line([x1, y1, x2, y2], {
       stroke: 'black',
-      strokeWidth : 5,
+      strokeWidth : 2,
       hasControls: false,
       hasBorders: false,
       selectable: false,
@@ -132,23 +180,56 @@ export class VisualizationComponent implements OnInit {
       hoverCursor: 'default'
     });
 
-    this.canvas.add(line);
+    if(this.selectedGraphType === 'neorientat') {
+      this.canvas.add(line);
+    } else {
+      let dx = x2_arrow - x1_arrow,
+          dy = y2_arrow - y1_arrow;
 
-    // this.canvas.beginPath();
-    // this.canvas.moveTo(objects[0].lineCoords.tr.x, objects[0].lineCoords.tr.y);
-    // this.canvas.lineTo(objects[1].lineCoords.tr.x, objects[1].lineCoords.tr.y);
-    // this.canvas.strokeStyle = "#aaa";
-    // this.canvas.stroke();
+      let angle = Math.atan2(dy, dx);
+      angle *= 180 / Math.PI;
+      angle += 90;
 
-    // this.canvas.add(new fabric.Line([50, 100, 200, 200], {
-    //   left: 170,
-    //   top: 150,
-    //   stroke: 'red'
-    // }));
+      var triangle = new fabric.Triangle({
+        originX: 'center',
+        originY: 'center',
+        stroke: 'black',
+        width: 10,
+        height: 15,
+        fill: 'black',
+        top: y2_arrow,
+        left: x2_arrow,
+        angle: angle
+      });
+
+      var arrowGroup = new fabric.Group([ line, triangle], {
+        selectable: false
+      });
+
+      this.canvas.add(arrowGroup);
+    }
+
+    if(this.selectedGraphType2 === 'ponderat') {
+      var x_text = (x1+x2) / 2;
+      var y_text = (y1+y2) / 2;
+      if(this.pondere) {
+        var weightText = this.pondere.toString();
+        var weight = new fabric.Text(weightText, {
+          fill: 'black',
+          left: x_text,
+          top: y_text,
+          fontSize: 20
+        });
+        this.canvas.add(weight);
+      }
+    }
+
+    this.value1 = undefined;
+    this.value2 = undefined;
+    this.pondere = undefined;
   }
 
   getCanvasElements() {
-    console.log(this.canvas.getObjects()[0]);
     this.canvas.getObjects()[0]._objects[0].set('fill', '#b30000');
     this.canvas.renderAll();
   }
