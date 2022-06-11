@@ -1,1 +1,56 @@
-<p>visualization works!</p>
+<div class="h-100 w-100">
+  <p-panel>
+    <p-header>
+      <strong class="p-0" style="color: #14B8A6;">
+        Vizualizarea algoritmilor de parcurgere cu nod de start
+      </strong>
+    </p-header>
+    <div class="h-100">
+      <div class="row h-100">
+        <div class="col-7 h-100" id="canvasContainer">
+          <canvas id="canvas" style="border: 1px solid #14B8A6;"></canvas>
+        </div>
+        <div class="col-5 h-100" style="border: 1px solid #4ed5c6;">
+          <div class="row pt-2">
+              <div class="col-6" style="align-self: center; text-align: center;"><strong>Construiește un graf:</strong></div>
+              <div class="col-6" style="text-align: center;">
+                <p-selectButton (onChange)="changedGraphType()" [options]="graphTypes" [(ngModel)]="selectedGraphType" optionLabel="name" optionValue="value">
+                </p-selectButton>
+              </div>
+          </div>
+          <div class="row pt-2">
+            <div class="col-6" style="align-self: center; text-align: center;"><strong>Care este:</strong></div>
+            <div class="col-6" style="text-align: center;">
+              <p-selectButton (onChange)="changedGraphType2()" [options]="graphTypes2" [(ngModel)]="selectedGraphType2" optionLabel="name" optionValue="value">
+              </p-selectButton>
+            </div>
+          </div>
+          <div *ngIf="selectedGraphType && selectedGraphType2" class="row pt-2">
+            <div class="col-6" style="align-self: center; text-align: center;"><strong>Adaugă noduri:</strong></div>
+            <div class="col-6" style="text-align: center;">
+              <button pButton type="button" (click)="addNode()">Adaugă nod</button>
+            </div>
+          </div>
+          <div *ngIf="readyToAddLink" class="row pt-2">
+            <div class="col-6" style="align-self: center; text-align: center;"><strong>{{linkType}}</strong></div>
+            <div class="col-6" style="text-align: center;">
+              <div class="row" style="justify-content: center;">
+                <p-inputNumber class="w-25" [(ngModel)]="value1" buttonLayout="vertical" inputId="value1">
+                </p-inputNumber>
+                <i class="pi pi-minus"></i>
+                <p-inputNumber class="w-25" [(ngModel)]="value2" buttonLayout="vertical" inputId="value2">
+                </p-inputNumber>
+                <button pButton type="button" icon="pi pi-plus" (click)="addLink()"></button>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-2">
+            <div class="col-6" style="text-align: center;">
+              <button pButton type="button" (click)="getCanvasElements()">Ia elem</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-panel>
+</div>

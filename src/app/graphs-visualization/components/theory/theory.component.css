@@ -1,0 +1,26 @@
+.graphContainer {
+  height: 15vh;
+  background-image: url('../../../../assets/graph.png');
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: center;
+  align-self: center;
+}
+
+.undirectedGraph {
+  height: 20vh;
+  background-image: url('../../../../assets/undirectedGraph.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  align-self: center;
+}
+
+.directedGraph {
+  height: 20vh;
+  background-image: url('../../../../assets/directedGraph.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  align-self: center;
+}

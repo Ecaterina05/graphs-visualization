@@ -1,1 +1,76 @@
-<p>theory works!</p>
+<p-card>
+    <h5>Graf</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-8">
+          <li>
+            <p>Se numește <span style="color: #14B8A6;">graf</span> o reprezentare picturală a unui set de obiecte în care unele perechi de obiecte sunt conectate prin legături.
+            Obiectele interconectate sunt reprezentate prin puncte numite <span style="color: #14B8A6;">vârfuri</span>, iar legăturile care leagă vârfurile sunt numite <span style="color: #14B8A6;">muchii</span>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Rețelele de socializare sunt un exemplu excelent de utilizare a unui graf.
+              Rețelele de socializare utilizează grafuri pentru a stoca informații despre fiecare utilizator.
+              Astfel, fiecare utilizator este reprezentat de un nod, iar dacă acesta se împrietenește cu alt utilizator,
+              atunci se formează o legătură (o muchie) între cei doi.
+            </p>
+          </li>
+        </ul>
+        <div class="col-4 graphContainer"></div>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Graf neorientat</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-8">
+          <li>
+            <p>
+              Un <span style="color: #14B8A6;">graf neorientat</span> reprezintă un set finit de noduri și de legături (muchii) între acestea cu proprietatea că dacă
+              există o muchie (a,b) între nodurile a și b, atunci există și muchia (b,a).
+            </p>
+          </li>
+          <li>
+            <p>
+              Grafurile neorientate sunt foarte comune în practică și multe relații din realitate de tip simetric sunt modelate cu ajutorul acestora.
+            </p>
+          </li>
+          <li>
+            <p>
+              Relația <span style="color: #14B8A6;">"este prieten cu"</span> este o relație tipică simetrică.
+              Dacă presupunem că "Ion este prieten cu Ana", este adevărat de asemenea că "Ana este prieten cu Ion".
+            </p>
+          </li>
+        </ul>
+        <div class="col-4 undirectedGraph"></div>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Graf orientat</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-8">
+          <li>
+            <p>
+              Un <span style="color: #14B8A6;">graf orientat</span>, numit și <span style="color: #14B8A6;">digraf</span> reprezintă un graf în care muchiile au o direcție.
+              Într-un graf orientat, dacă a și b sunt două noduri legate printr-o muchie (a,b),
+              aceasta nu înseamnă neapărat că există și o muchie care conectează (b,a).
+            </p>
+          </li>
+          <li>
+            <p>
+              Muchiile unui graf orientat se mai numesc și <span style="color: #14B8A6;">arce</span> și sunt reprezentate prin săgeți.
+              Arcul (a,b) este desenat ca o săgeată de la nodul a la nodul b.
+            </p>
+          </li>
+          <li>
+            <p>
+              Rețele de socializare Twitter sau Instagram sunt un bun exemplu de grafuri orientate din realitate.
+              O persoană poate urmări contul unui utilizator, dar asta nu înseamna că utilizatorul urmărește contul
+              persoanei respective.
+            </p>
+          </li>
+        </ul>
+        <div class="col-4 directedGraph"></div>
+      </div>
+    </p-card>
+</p-card>
