@@ -13,6 +13,7 @@ import {ButtonModule} from 'primeng/button';
 import {SelectButtonModule} from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
 import {InputNumberModule} from 'primeng/inputnumber';
+import {DropdownModule} from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import {InputNumberModule} from 'primeng/inputnumber';
     RadioButtonModule,
     SelectButtonModule,
     InputNumberModule,
+    DropdownModule,
     FormsModule
   ]
 })

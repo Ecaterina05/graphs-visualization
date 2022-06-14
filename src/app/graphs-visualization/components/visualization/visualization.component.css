@@ -15,3 +15,7 @@
   padding-left: 0 !important;
   margin-top: 1rem !important;
 }
+
+:host /deep/ .p-dropdown {
+  width: 100%;
+}

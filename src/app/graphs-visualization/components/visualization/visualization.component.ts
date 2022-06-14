@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
+import { AlgorithmsService } from '../common/algorithms.service';
 import { Node } from '../common/node.model';
 
 @Component({
@@ -10,13 +11,21 @@ import { Node } from '../common/node.model';
 export class VisualizationComponent implements OnInit {
   canvas: any;
   parent: any;
+  canvasObjects: any;
+  canvasNodes: any[] = [];
+  previousCanvasNodes: any[] = [];
+  canvasLinks: any[] = [];
+
   linkType = '';
   readyToAddLink = false;
+  readyToFinishGraph = false;
   value1: number | undefined;
   value2: number | undefined ;
   pondere: number | undefined;
 
   nodesArray: Node[] = [];
+  adjacencyList: Array<Array<{ label: number, weight: number }>> = [[]];
+  coloredNodesOrder: Array<Array<number>> = [[]];
 
   leftNode!: number;
   topNode!: number;
@@ -25,9 +34,21 @@ export class VisualizationComponent implements OnInit {
 
   selectedGraphType = '';
   selectedGraphType2 = '';
+  selectedAlgorithm!: Algorithm;
 
   graphTypes: any[];
   graphTypes2: any[];
+  var1_algorithms: Algorithm[];
+  var2_algorithms: Algorithm[];
+  algorithms: Algorithm[] = [];
+
+  finishedGraphDrawing = false;
+  algorithmStarted = false;
+  reachNextStep = false;
+  algorithmFinished = false;
+
+  startNode: number | undefined;
+  finishNode: number | undefined;
 
   @HostListener('window:resize')
   onResize() {
@@ -40,7 +61,7 @@ export class VisualizationComponent implements OnInit {
     this.canvas.setWidth(width);
   }
 
-  constructor() {
+  constructor(private algorithmsService: AlgorithmsService) {
     this.graphTypes = [
       { name: 'neorientat', value: 'neorientat' },
       { name: 'orientat', value: 'orientat' }
@@ -50,6 +71,17 @@ export class VisualizationComponent implements OnInit {
       { name: 'neponderat', value: 'neponderat' },
       { name: 'ponderat', value: 'ponderat' }
     ];
+
+    this.var1_algorithms = [
+      { name: 'BFS' , code: 1},
+      { name: 'DFS', code: 2}
+    ];
+
+    this.var2_algorithms = [
+      { name: 'Dijkstra' , code: 1},
+      { name: 'Bellman-Ford' , code: 2},
+      { name: 'Yen' , code: 3}
+    ]
   }
 
   ngOnInit(): void {
@@ -78,10 +110,6 @@ export class VisualizationComponent implements OnInit {
     }
   }
 
-  changedGraphType2() {
-    console.log(this.selectedGraphType2);
-  }
-
   getRandomArbitrary(min : number, max : number) {
     return Math.random() * (max - min) + min;
   }
@@ -92,6 +120,7 @@ export class VisualizationComponent implements OnInit {
 
   addNode() {
     this.nodesNumer++;
+    this.adjacencyList[this.nodesNumer] = [];
     var nodeNumber = this.nodesNumer.toString();
 
     var left = this.randomIntFromInterval(1,791);
@@ -114,7 +143,7 @@ export class VisualizationComponent implements OnInit {
       fill: 'white',
       stroke: '#14B8A6',
       originX: 'center',
-      originY: 'center'
+      originY: 'center',
     });
 
     var text = new fabric.Text(nodeNumber, {
@@ -126,8 +155,10 @@ export class VisualizationComponent implements OnInit {
     var group = new fabric.Group([ circle, text ], {
       left: this.leftNode,
       top: this.topNode,
-      selectable: false
-    });
+      selectable: false,
+      id: this.nodesNumer
+    } as IGroupWithId
+    );
 
     this.nodesArray.push({
       left: this.leftNode,
@@ -150,24 +181,46 @@ export class VisualizationComponent implements OnInit {
     var first_node = this.nodesArray.find(node => node.label == this.value1);
     var second_node = this.nodesArray.find(node => node.label == this.value2);
 
-    if(first_node!.left < second_node!.left) {
-      x1 = first_node?.coordonates.mr.x;
-      y1 = first_node?.coordonates.mr.y;
-      x2 = second_node?.coordonates.ml.x;
-      y2 = second_node?.coordonates.ml.y;
-      x1_arrow = x1;
-      y1_arrow = y1;
-      x2_arrow = x2;
-      y2_arrow = y2;
+    if(Math.abs(first_node!.left - second_node!.left) < 100 && Math.abs(first_node!.top - second_node!.top) > 100) {
+      if(first_node!.top < second_node!.top) {
+        x1 = first_node?.coordonates.mb.x;
+        y1 = first_node?.coordonates.mb.y;
+        x2 = second_node?.coordonates.mt.x;
+        y2 = second_node?.coordonates.mt.y;
+        x1_arrow = x1;
+        y1_arrow = y1;
+        x2_arrow = x2;
+        y2_arrow = y2;
+      } else {
+        x1 = second_node?.coordonates.mb.x;
+        y1 = second_node?.coordonates.mb.y;
+        x2 = first_node?.coordonates.mt.x;
+        y2 = first_node?.coordonates.mt.y;
+        x1_arrow = x2;
+        y1_arrow = y2;
+        x2_arrow = x1;
+        y2_arrow = y1;
+      }
     } else {
-      x1 = second_node?.coordonates.mr.x;
-      y1 = second_node?.coordonates.mr.y;
-      x2 = first_node?.coordonates.ml.x;
-      y2 = first_node?.coordonates.ml.y;
-      x1_arrow = x2;
-      y1_arrow = y2;
-      x2_arrow = x1;
-      y2_arrow = y1;
+      if(first_node!.left < second_node!.left) {
+        x1 = first_node?.coordonates.mr.x;
+        y1 = first_node?.coordonates.mr.y;
+        x2 = second_node?.coordonates.ml.x;
+        y2 = second_node?.coordonates.ml.y;
+        x1_arrow = x1;
+        y1_arrow = y1;
+        x2_arrow = x2;
+        y2_arrow = y2;
+      } else {
+        x1 = second_node?.coordonates.mr.x;
+        y1 = second_node?.coordonates.mr.y;
+        x2 = first_node?.coordonates.ml.x;
+        y2 = first_node?.coordonates.ml.y;
+        x1_arrow = x2;
+        y1_arrow = y2;
+        x2_arrow = x1;
+        y2_arrow = y1;
+      }
     }
 
     var line = new fabric.Line([x1, y1, x2, y2], {
@@ -177,12 +230,21 @@ export class VisualizationComponent implements OnInit {
       hasBorders: false,
       selectable: false,
       evented: false,
-      hoverCursor: 'default'
-    });
+      hoverCursor: 'default',
+      id: {source: first_node?.label, target: second_node?.label}
+    } as ILineWithId);
+
+    if(!this.pondere) {
+      this.pondere = 0;
+    }
 
     if(this.selectedGraphType === 'neorientat') {
       this.canvas.add(line);
+      this.adjacencyList[first_node!.label].push({label: second_node!.label, weight: this.pondere});
+      this.adjacencyList[second_node!.label].push({label: first_node!.label, weight: this.pondere});
     } else {
+      this.adjacencyList[first_node!.label].push({label: second_node!.label, weight: this.pondere});
+
       let dx = x2_arrow - x1_arrow,
           dy = y2_arrow - y1_arrow;
 
@@ -227,10 +289,90 @@ export class VisualizationComponent implements OnInit {
     this.value1 = undefined;
     this.value2 = undefined;
     this.pondere = undefined;
+    this.readyToFinishGraph = true;
   }
 
-  getCanvasElements() {
-    this.canvas.getObjects()[0]._objects[0].set('fill', '#b30000');
-    this.canvas.renderAll();
+  finishGraphDrawing() {
+    this.finishedGraphDrawing = true;
+    if(this.selectedGraphType2 === 'neponderat') {
+      this.algorithms = this.var1_algorithms;
+    } else {
+      this.algorithms = this.var2_algorithms;
+    }
   }
+
+  selectAlgorithm() {
+    this.algorithmStarted = true;
+  }
+
+  startAlgorithm() {
+    this.canvasObjects = this.canvas.getObjects();
+    this.canvasObjects.forEach((canvasObject: { id: any; }) => {
+      if(typeof canvasObject.id === 'number') {
+        this.canvasNodes.push(canvasObject);
+      } else {
+        this.canvasLinks.push(canvasObject);
+      }
+    });
+    if(this.startNode) {
+      if(this.selectedAlgorithm.name === 'BFS') {
+        this.coloredNodesOrder = this.algorithmsService.BFS(this.adjacencyList, this.startNode);
+      }
+      if(this.selectedAlgorithm.name === 'DFS') {
+        this.coloredNodesOrder = this.algorithmsService.DFS(this.adjacencyList, this.startNode);
+        console.log(this.coloredNodesOrder);
+      }
+      if(this.selectedAlgorithm.name === 'Dijkstra') {
+        // this.algorithmsService.Dijkstra(this.adjacencyList, this.startNode);
+        this.coloredNodesOrder = this.algorithmsService.Dijkstra(this.adjacencyList, this.startNode);
+      }
+      // if(this.selectedAlgorithm.name === 'Bellman-Ford') {
+      //   this.coloredNodesOrder = this.algorithmsService.BF(this.adjacencyList, this.startNode);
+      // }
+      // if(this.selectedAlgorithm.name === 'Yen') {
+      //   this.coloredNodesOrder = this.algorithmsService.Yen(this.adjacencyList, this.startNode);
+      // }
+      var node = this.canvasNodes.find(node => node.id == this.startNode);
+      node._objects[0].set('fill', '#14B8A6');
+      this.previousCanvasNodes.push(node);
+      this.canvas.renderAll();
+    }
+    this.algorithmStarted = false;
+    this.reachNextStep = true;
+  }
+
+  nextStep() {
+    if(this.coloredNodesOrder.length) {
+      this.previousCanvasNodes.forEach(node => {
+        node._objects[0].set('fill', '#D3D3D3');
+      });
+      var nodesToColor = this.coloredNodesOrder[0];
+      this.coloredNodesOrder.shift();
+      nodesToColor.forEach(_node => {
+        var nodeToColor = this.canvasNodes.find(node => node.id == _node);
+        nodeToColor._objects[0].set('fill', '#14B8A6');
+        this.previousCanvasNodes.push(nodeToColor);
+      });
+      this.canvas.renderAll();
+    } else {
+      this.previousCanvasNodes.forEach(node => {
+        node._objects[0].set('fill', '#D3D3D3');
+      });
+      this.algorithmFinished = true;
+      this.canvas.renderAll();
+    }
+  }
+}
+
+interface IGroupWithId extends fabric.IGroupOptions {
+  id: number;
+}
+
+interface ILineWithId extends fabric.ILineOptions {
+  id: {source: number, target: number};
+}
+
+interface Algorithm {
+  name: string,
+  code: number
 }

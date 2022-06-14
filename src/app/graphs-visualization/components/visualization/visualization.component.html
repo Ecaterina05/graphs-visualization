@@ -2,7 +2,7 @@
   <p-panel>
     <p-header>
       <strong class="p-0" style="color: #14B8A6;">
-        Vizualizarea algoritmilor de parcurgere cu nod de start
+        Vizualizarea algoritmilor de parcurgere
       </strong>
     </p-header>
     <div class="h-100">
@@ -11,45 +11,85 @@
           <canvas id="canvas" style="border: 1px solid #14B8A6;"></canvas>
         </div>
         <div class="col-5 h-100" style="border: 1px solid #4ed5c6;">
-          <div class="row pt-2">
-              <div class="col-6" style="align-self: center; text-align: center;"><strong>Construiește un graf:</strong></div>
+          <div *ngIf="!finishedGraphDrawing">
+            <div class="row pt-2">
+                <div class="col-6" style="align-self: center; text-align: center;"><strong>Construiește un graf:</strong></div>
+                <div class="col-6" style="text-align: center;">
+                  <p-selectButton (onChange)="changedGraphType()" [options]="graphTypes" [(ngModel)]="selectedGraphType" optionLabel="name" optionValue="value">
+                  </p-selectButton>
+                </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-6" style="align-self: center; text-align: center;"><strong>Care este:</strong></div>
               <div class="col-6" style="text-align: center;">
-                <p-selectButton (onChange)="changedGraphType()" [options]="graphTypes" [(ngModel)]="selectedGraphType" optionLabel="name" optionValue="value">
+                <p-selectButton [options]="graphTypes2" [(ngModel)]="selectedGraphType2" optionLabel="name" optionValue="value">
                 </p-selectButton>
               </div>
-          </div>
-          <div class="row pt-2">
-            <div class="col-6" style="align-self: center; text-align: center;"><strong>Care este:</strong></div>
-            <div class="col-6" style="text-align: center;">
-              <p-selectButton (onChange)="changedGraphType2()" [options]="graphTypes2" [(ngModel)]="selectedGraphType2" optionLabel="name" optionValue="value">
-              </p-selectButton>
             </div>
-          </div>
-          <div *ngIf="selectedGraphType && selectedGraphType2" class="row pt-2">
-            <div class="col-6" style="align-self: center; text-align: center;"><strong>Adaugă noduri:</strong></div>
-            <div class="col-6" style="text-align: center;">
-              <button pButton type="button" (click)="addNode()">Adaugă nod</button>
+            <div *ngIf="selectedGraphType && selectedGraphType2" class="row pt-2">
+              <div class="col-6" style="align-self: center; text-align: center;"><strong>Adaugă noduri:</strong></div>
+              <div class="col-6" style="text-align: center;">
+                <button pButton type="button" (click)="addNode()">Adaugă nod</button>
+              </div>
             </div>
-          </div>
-          <div *ngIf="readyToAddLink" class="row pt-2">
-            <div class="col-6" style="align-self: center; text-align: center;"><strong>{{linkType}}</strong></div>
-            <div class="col-6" style="text-align: center;">
-              <div class="row" style="justify-content: center;">
-                <p-inputNumber class="w-25" [(ngModel)]="value1" buttonLayout="vertical" inputId="value1">
-                </p-inputNumber>
-                <i class="pi pi-minus smallContainer"></i>
-                <p-inputNumber class="w-25" [(ngModel)]="value2" buttonLayout="vertical" inputId="value2">
-                </p-inputNumber>
-                <p *ngIf="selectedGraphType2 ==='ponderat'" class="smallContainer">P:</p>
-                <p-inputNumber *ngIf="selectedGraphType2 ==='ponderat'" class="w-25" [(ngModel)]="pondere" buttonLayout="vertical" inputId="pondere">
-                </p-inputNumber>
-                <button [disabled]="!value1 || !value2" pButton type="button" icon="pi pi-plus" (click)="addLink()"></button>
+            <div *ngIf="readyToAddLink" class="row pt-2">
+              <div class="col-6" style="align-self: center; text-align: center;"><strong>{{linkType}}</strong></div>
+              <div class="col-6" style="text-align: center;">
+                <div class="row" style="justify-content: center;">
+                  <p-inputNumber class="w-25" [(ngModel)]="value1" buttonLayout="vertical" inputId="value1">
+                  </p-inputNumber>
+                  <i class="pi pi-minus smallContainer"></i>
+                  <p-inputNumber class="w-25" [(ngModel)]="value2" buttonLayout="vertical" inputId="value2">
+                  </p-inputNumber>
+                  <p *ngIf="selectedGraphType2 ==='ponderat'" class="smallContainer">P:</p>
+                  <p-inputNumber *ngIf="selectedGraphType2 ==='ponderat'" class="w-25" [(ngModel)]="pondere" buttonLayout="vertical" inputId="pondere">
+                  </p-inputNumber>
+                  <button [disabled]="!value1 || !value2" pButton type="button" icon="pi pi-plus" (click)="addLink()"></button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="readyToFinishGraph" class="row pt-2">
+              <div class="col-6" style="text-align: center;">
+                <button pButton type="button" (click)="finishGraphDrawing()">Finalizare desenare graf</button>
               </div>
             </div>
           </div>
-          <div class="row pt-2">
+          <div *ngIf="finishedGraphDrawing && !reachNextStep" class="row pt-4">
+            <div class="col-6" style="align-self: center; text-align: center;"><strong>Următorii algoritmi sunt valabili pentru graful desenat:</strong></div>
             <div class="col-6" style="text-align: center;">
-              <button pButton type="button" (click)="getCanvasElements()">Ia elem</button>
+              <span class="p-float-label w-100">
+                <p-dropdown (onChange)="selectAlgorithm()" class="w-100" inputId="algorithms" [autoDisplayFirst]="false" [options]="algorithms" [(ngModel)]="selectedAlgorithm" optionLabel="name"></p-dropdown>
+                <label for="algorithms">Selectează un algoritm</label>
+              </span>
+            </div>
+          </div>
+          <div *ngIf="algorithmStarted" class="row pt-4">
+            <div class="col-6" style="text-align: center;">
+              <div class="row" style="justify-content: center;">
+                  <p style="width: 50%;  margin-top: 1rem !important;">Alege nodul de start:</p>
+                  <p-inputNumber class="w-25" [(ngModel)]="startNode" buttonLayout="vertical" inputId="startNode">
+                  </p-inputNumber>
+              </div>
+              <div *ngIf="selectedGraphType2 ==='ponderat'" class="row" style="justify-content: center;">
+                <p style="width: 50%;  margin-top: 1rem !important;">Alege nodul de finish:</p>
+                <p-inputNumber class="w-25" [(ngModel)]="finishNode" buttonLayout="vertical" inputId="finishNode">
+                </p-inputNumber>
+              </div>
+            </div>
+            <div class="col-6" style="align-self: center; text-align: center;">
+              <button pButton type="button" (click)="startAlgorithm()">Start</button>
+            </div>
+          </div>
+          <div *ngIf="reachNextStep && !algorithmFinished">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-6" style="text-align: center;">
+                <button pButton type="button" (click)="nextStep()">Pasul următor</button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="algorithmFinished">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-6" style="align-self: center; text-align: center; color: #14B8A6; font-size: x-large;"><strong>Algoritmul a luat sfârșit!</strong></div>
             </div>
           </div>
         </div>
