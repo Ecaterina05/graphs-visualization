@@ -26,6 +26,7 @@ export class VisualizationComponent implements OnInit {
   nodesArray: Node[] = [];
   adjacencyList: Array<Array<{ label: number, weight: number }>> = [[]];
   coloredNodesOrder: Array<Array<number>> = [[]];
+  coloredPath:  Array<number> = [];
 
   leftNode!: number;
   topNode!: number;
@@ -46,9 +47,12 @@ export class VisualizationComponent implements OnInit {
   algorithmStarted = false;
   reachNextStep = false;
   algorithmFinished = false;
+  alertNegativeWeights = false;
+  displayNegativeWeightsError = false;
 
   startNode: number | undefined;
   finishNode: number | undefined;
+  kPaths: number | undefined;
 
   @HostListener('window:resize')
   onResize() {
@@ -223,6 +227,10 @@ export class VisualizationComponent implements OnInit {
       }
     }
 
+    if(!this.pondere) {
+      this.pondere = 0;
+    }
+
     var line = new fabric.Line([x1, y1, x2, y2], {
       stroke: 'black',
       strokeWidth : 2,
@@ -231,12 +239,10 @@ export class VisualizationComponent implements OnInit {
       selectable: false,
       evented: false,
       hoverCursor: 'default',
-      id: {source: first_node?.label, target: second_node?.label}
+      id: {source: first_node?.label, target: second_node?.label},
+      weight: this.pondere
     } as ILineWithId);
 
-    if(!this.pondere) {
-      this.pondere = 0;
-    }
 
     if(this.selectedGraphType === 'neorientat') {
       this.canvas.add(line);
@@ -265,8 +271,10 @@ export class VisualizationComponent implements OnInit {
       });
 
       var arrowGroup = new fabric.Group([ line, triangle], {
-        selectable: false
-      });
+        selectable: false,
+        id: {source: first_node?.label, target: second_node?.label},
+        weight: this.pondere
+      } as ILineGroupWithId);
 
       this.canvas.add(arrowGroup);
     }
@@ -306,6 +314,7 @@ export class VisualizationComponent implements OnInit {
   }
 
   startAlgorithm() {
+    this.displayNegativeWeightsError = false;
     this.canvasObjects = this.canvas.getObjects();
     this.canvasObjects.forEach((canvasObject: { id: any; }) => {
       if(typeof canvasObject.id === 'number') {
@@ -314,23 +323,36 @@ export class VisualizationComponent implements OnInit {
         this.canvasLinks.push(canvasObject);
       }
     });
+    this.canvasLinks.forEach(link => {
+      if(link.weight < 0) {
+        this.alertNegativeWeights = true;
+      }
+    })
     if(this.startNode) {
       if(this.selectedAlgorithm.name === 'BFS') {
         this.coloredNodesOrder = this.algorithmsService.BFS(this.adjacencyList, this.startNode);
       }
       if(this.selectedAlgorithm.name === 'DFS') {
         this.coloredNodesOrder = this.algorithmsService.DFS(this.adjacencyList, this.startNode);
-        console.log(this.coloredNodesOrder);
       }
-      if(this.selectedAlgorithm.name === 'Dijkstra') {
-        // this.algorithmsService.Dijkstra(this.adjacencyList, this.startNode);
-        this.coloredNodesOrder = this.algorithmsService.Dijkstra(this.adjacencyList, this.startNode);
+      if(this.selectedAlgorithm.name === 'Dijkstra' && this.alertNegativeWeights == true) {
+        this.displayNegativeWeightsError = true;
+        return;
       }
-      // if(this.selectedAlgorithm.name === 'Bellman-Ford') {
-      //   this.coloredNodesOrder = this.algorithmsService.BF(this.adjacencyList, this.startNode);
-      // }
+      if(this.selectedAlgorithm.name === 'Yen' && this.alertNegativeWeights == true) {
+        this.displayNegativeWeightsError = true;
+        return;
+      }
+      if(this.selectedAlgorithm.name === 'Dijkstra' && this.finishNode) {
+        const arrayReceived: any[] = this.algorithmsService.Dijkstra(this.adjacencyList, this.startNode, this.finishNode);
+        this.coloredNodesOrder = arrayReceived[0];
+        this.coloredPath = arrayReceived[1];
+      }
+      if(this.selectedAlgorithm.name === 'Bellman-Ford' && this.finishNode) {
+        this.coloredNodesOrder = this.algorithmsService.BF(this.adjacencyList, this.startNode, this.finishNode);
+      }
       // if(this.selectedAlgorithm.name === 'Yen') {
-      //   this.coloredNodesOrder = this.algorithmsService.Yen(this.adjacencyList, this.startNode);
+      //   this.coloredNodesOrder = this.algorithmsService.Yen(this.adjacencyList, this.startNode, this.finishNode, this.kPaths);
       // }
       var node = this.canvasNodes.find(node => node.id == this.startNode);
       node._objects[0].set('fill', '#14B8A6');
@@ -360,6 +382,17 @@ export class VisualizationComponent implements OnInit {
       });
       this.algorithmFinished = true;
       this.canvas.renderAll();
+      if(this.coloredPath.length) {
+        this.coloredPath.forEach(_node => {
+          var nodeToColor = this.canvasNodes.find(node => node.id == _node);
+          nodeToColor._objects[0].set('fill', '#ffcc00');
+          this.canvas.renderAll();
+        })
+      }
+    }
+
+    if(this.coloredPath) {
+
     }
   }
 }
@@ -370,6 +403,12 @@ interface IGroupWithId extends fabric.IGroupOptions {
 
 interface ILineWithId extends fabric.ILineOptions {
   id: {source: number, target: number};
+  weight: number;
+}
+
+interface ILineGroupWithId extends fabric.IGroupOptions {
+  id: {source: number, target: number};
+  weight: number;
 }
 
 interface Algorithm {

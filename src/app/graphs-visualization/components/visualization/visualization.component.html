@@ -66,13 +66,18 @@
           <div *ngIf="algorithmStarted" class="row pt-4">
             <div class="col-6" style="text-align: center;">
               <div class="row" style="justify-content: center;">
-                  <p style="width: 50%;  margin-top: 1rem !important;">Alege nodul de start:</p>
+                  <p style="width: 55%;  margin-top: 1rem !important;">Alege nodul de start:</p>
                   <p-inputNumber class="w-25" [(ngModel)]="startNode" buttonLayout="vertical" inputId="startNode">
                   </p-inputNumber>
               </div>
               <div *ngIf="selectedGraphType2 ==='ponderat'" class="row" style="justify-content: center;">
-                <p style="width: 50%;  margin-top: 1rem !important;">Alege nodul de finish:</p>
+                <p style="width: 55%;  margin-top: 1rem !important;">Alege nodul de finish:</p>
                 <p-inputNumber class="w-25" [(ngModel)]="finishNode" buttonLayout="vertical" inputId="finishNode">
+                </p-inputNumber>
+              </div>
+              <div *ngIf="selectedGraphType2 ==='ponderat' && selectedAlgorithm.name === 'Yen'" class="row" style="justify-content: center;">
+                <p style="width: 55%;  margin-top: 1rem !important;">Alege câte drumuri de cost minim doresti să vizualizezi de la nodul start la nodul finish:</p>
+                <p-inputNumber style="height: 44%; margin-top: 2rem !important;" class="w-25" [(ngModel)]="kPaths" buttonLayout="vertical" inputId="kPaths">
                 </p-inputNumber>
               </div>
             </div>
@@ -80,6 +85,11 @@
               <button pButton type="button" (click)="startAlgorithm()">Start</button>
             </div>
           </div>
+          <div *ngIf="displayNegativeWeightsError" class="row pt-4">
+            <div class="col-6" style="align-self: center; text-align: center;">
+              <p style="margin-top: 1rem !important; color: red;">Atenție! Acest algoritm nu se poate aplica pe un graf cu ponderi negative!</p>
+            </div>
+        </div>
           <div *ngIf="reachNextStep && !algorithmFinished">
             <div class="row" style="padding-top: 10%;">
               <div class="col-6" style="text-align: center;">
@@ -97,4 +107,4 @@
     </div>
   </p-panel>
 </div>
-<div id="alchemy" class="alchemy"></div>
+

@@ -1,0 +1,21 @@
+:host /deep/ .p-panel .p-panel-header {
+  padding: 0.5rem !important;
+}
+
+:host /deep/ .p-panel .p-panel-content {
+  height: calc(100vh - 184px);
+}
+
+:host /deep/ .p-inputnumber-input {
+  width: 25%;
+}
+
+.smallContainer {
+  width: 2% !important;
+  padding-left: 0 !important;
+  margin-top: 1rem !important;
+}
+
+:host /deep/ .p-dropdown {
+  width: 100%;
+}

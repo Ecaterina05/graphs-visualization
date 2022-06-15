@@ -5,7 +5,6 @@ import { GraphsVisualizationComponent } from './container/graphs-visualization.c
 import { TheoryComponent } from './components/theory/theory.component';
 import { VisualizationComponent } from './components/visualization/visualization.component';
 import { ApplicationsComponent } from './components/applications/applications.component';
-import { SavedComponent } from './components/saved/saved.component';
 import {CardModule} from 'primeng/card';
 import {PanelModule} from 'primeng/panel';
 import {RadioButtonModule} from 'primeng/radiobutton';
@@ -20,8 +19,7 @@ import {DropdownModule} from 'primeng/dropdown';
     GraphsVisualizationComponent,
     TheoryComponent,
     VisualizationComponent,
-    ApplicationsComponent,
-    SavedComponent
+    ApplicationsComponent
   ],
   imports: [
     CommonModule,
