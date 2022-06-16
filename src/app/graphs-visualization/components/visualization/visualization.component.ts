@@ -83,8 +83,7 @@ export class VisualizationComponent implements OnInit {
 
     this.var2_algorithms = [
       { name: 'Dijkstra' , code: 1},
-      { name: 'Bellman-Ford' , code: 2},
-      { name: 'Yen' , code: 3}
+      { name: 'Bellman-Ford' , code: 2}
     ]
   }
 
@@ -243,7 +242,6 @@ export class VisualizationComponent implements OnInit {
       weight: this.pondere
     } as ILineWithId);
 
-
     if(this.selectedGraphType === 'neorientat') {
       this.canvas.add(line);
       this.adjacencyList[first_node!.label].push({label: second_node!.label, weight: this.pondere});
@@ -339,10 +337,6 @@ export class VisualizationComponent implements OnInit {
         this.displayNegativeWeightsError = true;
         return;
       }
-      if(this.selectedAlgorithm.name === 'Yen' && this.alertNegativeWeights == true) {
-        this.displayNegativeWeightsError = true;
-        return;
-      }
       if(this.selectedAlgorithm.name === 'Dijkstra' && this.finishNode) {
         const arrayReceived: any[] = this.algorithmsService.Dijkstra(this.adjacencyList, this.startNode, this.finishNode);
         this.coloredNodesOrder = arrayReceived[0];
@@ -351,9 +345,6 @@ export class VisualizationComponent implements OnInit {
       if(this.selectedAlgorithm.name === 'Bellman-Ford' && this.finishNode) {
         this.coloredNodesOrder = this.algorithmsService.BF(this.adjacencyList, this.startNode, this.finishNode);
       }
-      // if(this.selectedAlgorithm.name === 'Yen') {
-      //   this.coloredNodesOrder = this.algorithmsService.Yen(this.adjacencyList, this.startNode, this.finishNode, this.kPaths);
-      // }
       var node = this.canvasNodes.find(node => node.id == this.startNode);
       node._objects[0].set('fill', '#14B8A6');
       this.previousCanvasNodes.push(node);
@@ -389,10 +380,6 @@ export class VisualizationComponent implements OnInit {
           this.canvas.renderAll();
         })
       }
-    }
-
-    if(this.coloredPath) {
-
     }
   }
 }

@@ -11,7 +11,30 @@
           <canvas id="canvasLabyrinth" style="border: 1px solid #14B8A6;"></canvas>
         </div>
         <div class="col-5 h-100" style="border: 1px solid #4ed5c6;">
-
+          <div *ngIf="!algorithmSelected" style="margin-top: 25%;">
+            <div class="row pt-2">
+              <div class="col-12" style="text-align: center;">
+                <button pButton type="button" (click)="resolveWithA_star()">Rezolvă cu A*</button>
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-12" style="text-align: center;">
+                <button pButton type="button" (click)="resolveWithDijkstra()">Rezolvă cu Dijkstra</button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="algorithmSelected && !algorithmFinished">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-6" style="text-align: center;">
+                <button pButton type="button" (click)="nextStep()">Pasul următor</button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="algorithmFinished">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-6" style="align-self: center; text-align: center; color: #14B8A6; font-size: x-large;"><strong>Algoritmul a luat sfârșit!</strong></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

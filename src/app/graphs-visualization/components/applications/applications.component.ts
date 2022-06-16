@@ -9,9 +9,25 @@ import { fabric } from 'fabric';
 export class ApplicationsComponent implements OnInit {
   canvas: any;
   parent: any;
+  canvasObjects: any;
+  algorithmSelected: boolean = false;
+  adjacencyList: Array<{ label: number, neighbours: Array<{ neighbour: any, weight : number }> }> = [];
+  temporaryNeighboursCoords: Array<{ nghi: number, nghj: number }> = [];
+  neighbours: Array<{ neighbour: any, weight : number  }> = [];
+
+  startNode: any;
+  finishNode: any;
+
+  coloredNodesOrder: Array<Array<number>> = [[]];
+  coloredPath: Array<number> = [];
+
+  finishCenterX!: number;
+  finishCenterY!: number;
+
+  algorithmFinished = false;;
 
   board = [
-    [ -2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [ 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
     [ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
     [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 0],
@@ -20,7 +36,7 @@ export class ApplicationsComponent implements OnInit {
     [ 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
     [ 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
     [ 1, 0, 1, 0, 1, 0, 0, 1, 1, 0],
-    [ 1, 0, 1, -1, 1, 1, 0, 0, 0, 0]
+    [ 1, -2, 1, -1, 1, 1, 0, 0, 0, 0]
   ];
 
   @HostListener('window:resize')
@@ -58,6 +74,7 @@ export class ApplicationsComponent implements OnInit {
     var squareLeft = -blockWidth;
     var squareTop = -blockHeight;
 
+    let k: number = 0;
     for(let i = 0; i < this.board.length; i++){
       squareTop = squareTop + blockHeight;
       squareLeft = -blockWidth;
@@ -71,7 +88,10 @@ export class ApplicationsComponent implements OnInit {
             width: blockWidth,
             height: blockHeight,
             fill: 'black',
-          });
+            label: k,
+            coordi: i,
+            coordj: j
+          } as IRectExtented);
           this.canvas.add(square);
         }
         if(this.board[i][j] === 0) {
@@ -82,7 +102,10 @@ export class ApplicationsComponent implements OnInit {
             width: blockWidth,
             height: blockHeight,
             fill: 'white',
-          });
+            label: k,
+            coordi: i,
+            coordj: j
+          } as IRectExtented);
           this.canvas.add(square);
         }
         if(this.board[i][j] === -1) {
@@ -93,7 +116,10 @@ export class ApplicationsComponent implements OnInit {
             width: blockWidth,
             height: blockHeight,
             fill: 'yellow',
-          });
+            label: k,
+            coordi: i,
+            coordj: j
+          } as IRectExtented);
           this.canvas.add(square);
         }
         if(this.board[i][j] === -2) {
@@ -104,13 +130,239 @@ export class ApplicationsComponent implements OnInit {
             width: blockWidth,
             height: blockHeight,
             fill: 'green',
-          });
+            label: k,
+            coordi: i,
+            coordj: j
+          } as IRectExtented);
           this.canvas.add(square);
         }
+        k = k + 1;
       }
     }
 
-    console.log(this.canvas.getObjects());
+    for(let nodeLabel=0; nodeLabel<k; nodeLabel++) {
+      this.temporaryNeighboursCoords = []
+      this.canvasObjects = this.canvas.getObjects();
+      var nodeSelected = this.canvasObjects.find((node: { label: number; }) => node.label == nodeLabel);
+      if(nodeSelected.fill !== 'black') {
+        if(nodeSelected.coordi == 0 && nodeSelected.coordj == 0) {
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
+        }
+        if(nodeSelected.coordi == 0 && nodeSelected.coordj == this.board.length-1) {
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
+        }
+        if(nodeSelected.coordi == this.board.length-1 && nodeSelected.coordj == 0) {
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
+        }
+        if(nodeSelected.coordi == this.board.length-1 && nodeSelected.coordj == this.board.length-1) {
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
+          this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
+        }
+        for(let i=1; i<this.board.length-1; i++) {
+          if(nodeSelected.coordi == i && nodeSelected.coordj == 0) {
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
+          }
+
+          if(nodeSelected.coordi == i && nodeSelected.coordj == this.board.length-1) {
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
+          }
+        }
+        for(let j=1; j<this.board.length-1; j++) {
+          if(nodeSelected.coordi == 0 && nodeSelected.coordj == j) {
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1 });
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
+          }
+
+          if(nodeSelected.coordi == this.board.length-1 && nodeSelected.coordj == j) {
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
+            this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
+          }
+        }
+        for(let i=1; i<this.board.length-1; i++) {
+          for(let j=1; j<this.board.length-1; j++) {
+            if(nodeSelected.coordi == i && nodeSelected.coordj == j) {
+              this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
+              this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
+              this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
+              this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
+            }
+          }
+        }
+
+        this.neighbours = [];
+        for(let index=0; index<this.temporaryNeighboursCoords.length; index++) {
+          var ngh = this.canvasObjects.find((node: { coordi: any; coordj: any; })  => (node.coordi == this.temporaryNeighboursCoords[index].nghi  && node.coordj == this.temporaryNeighboursCoords[index].nghj));
+          if(ngh.fill !== 'black') {
+            this.neighbours.push({neighbour: ngh, weight: 1});
+          }
+        }
+        this.adjacencyList.push({label: nodeSelected.label, neighbours: this.neighbours})
+      }
+    }
+
+    this.startNode = this.canvasObjects.find((node: { fill: string; }) => node.fill === 'yellow');
+    this.finishNode = this.canvasObjects.find((node: { fill: string; }) => node.fill === 'green');
+    this.finishCenterX = (this.finishNode.aCoords.bl.x + this.finishNode.aCoords.tr.x)/2;
+    this.finishCenterY = (this.finishNode.aCoords.bl.y + this.finishNode.aCoords.tr.y)/2;
+  }
+
+  resolveWithA_star() {
+    let finishNodeFound = false;
+    this.algorithmSelected = true;
+
+    let distance_f: Array<{ nodeLabel: number, distance : number, father:number }> = [];
+    let open_list: number[] = [];
+    let closed_list: number[] = [];
+    let g: Array<{ nodeLabel: number, weight : number }> = [];
+    let h: Array<{ nodeLabel: number, estimation : number }> = [];
+
+    this.adjacencyList.forEach(el => {
+      if(el.label != this.startNode.label) {
+        open_list.push(el.label);
+        var elCanvas = this.canvasObjects.find((node: { label: number; }) => node.label == el.label);
+        const elCanvasX = (elCanvas.aCoords.bl.x + elCanvas.aCoords.tr.x)/2;
+        const elCanvasY = (elCanvas.aCoords.bl.y + elCanvas.aCoords.tr.y)/2
+        var d = Math.sqrt(Math.pow((this.finishCenterX-elCanvasX), 2) + Math.pow((this.finishCenterY-elCanvasY), 2));
+        h.push({nodeLabel: el.label, estimation: d});
+        g.push({nodeLabel: el.label, weight: 0});
+      }
+    });
+
+    closed_list.push(this.startNode.label);
+    let nodeInPath = this.startNode.label;
+    let i = 0;
+
+    while(open_list.length && finishNodeFound == false) {
+      let nodeInList = this.adjacencyList.find(node => node.label == nodeInPath);
+      let nodeExtensions = nodeInList?.neighbours;
+
+      this.coloredNodesOrder[i] = [];
+      nodeExtensions?.forEach(ext => {
+          if(!closed_list.find(el => el == ext.neighbour.label)) {
+            const g_element = g.find(el => el.nodeLabel == ext.neighbour.label);
+            const g_var = g_element!.weight + ext.weight;
+            g_element!.weight = g_var;
+            const h_var = h.find(el => el.nodeLabel == ext.neighbour.label)!.estimation;
+            const d = g_var + h_var;
+            distance_f.push({nodeLabel: ext.neighbour.label, distance: d, father: nodeInPath});
+            this.coloredNodesOrder[i].push(ext.neighbour.label);
+          }
+        });
+
+      distance_f.sort((a,b) => a.distance - b.distance);
+      nodeInPath = distance_f[0].nodeLabel;
+      closed_list.push(nodeInPath);
+      distance_f.shift();
+
+      if(nodeInPath == this.finishNode.label) {
+        finishNodeFound = true;
+      }
+
+      const indexInOpenList = open_list.findIndex(el => el == nodeInPath);
+      open_list.slice(indexInOpenList, 1);
+      i = i + 1;
+    }
+    closed_list.shift();
+    this.coloredPath = closed_list;
+  }
+
+  resolveWithDijkstra() {
+    let finishNodeFound = false;
+    this.algorithmSelected = true;
+
+    let nodesToVisit: number[] = [];
+    let visitedNode: any[] = [];
+    let nodeInfo: Array<{ node: number, distance: number, father: number }> = [];
+
+    this.adjacencyList.forEach(el => {
+      if(el.label != this.startNode.label) {
+        nodesToVisit.push(el.label);
+        nodeInfo.push({node: el.label, distance: Number.MAX_VALUE, father: -10});
+      }
+    });
+
+    let nodeInPath = this.startNode.label;
+    visitedNode.push(nodeInPath);
+    nodeInfo.push({node: nodeInPath, distance: 0, father: -10});
+    let i = 0;
+
+    while(nodesToVisit.length && finishNodeFound == false) {
+      let nodeInList = this.adjacencyList.find(node => node.label == nodeInPath);
+      let nodeExtensions = nodeInList?.neighbours;
+      let dist = nodeInfo.find(el => el.node == nodeInPath);
+
+      let unvisitedNeighbours: any[] = [];
+      this.coloredNodesOrder[i] = [];
+      nodeExtensions?.forEach(ext => {
+        if(!visitedNode.find(el => el == ext.neighbour.label)) {
+          let distance_var = nodeInfo.find(el => el.node == ext.neighbour.label);
+          if(dist!.distance + ext.weight < distance_var!.distance) {
+            distance_var!.distance = dist!.distance + ext.weight;
+          }
+          unvisitedNeighbours.push(distance_var);
+          this.coloredNodesOrder[i].push(distance_var!.node);
+        }
+      });
+
+      let selectedNode;
+      if(unvisitedNeighbours.length) {
+        unvisitedNeighbours.sort((a,b) => a.distance - b.distance);
+        selectedNode = unvisitedNeighbours[0];
+      }
+
+      if(selectedNode && selectedNode.distance != Number.MAX_VALUE) {
+        selectedNode.father = nodeInPath;
+        visitedNode.push(selectedNode.node);
+        nodeInPath = selectedNode.node;
+        this.coloredPath.push(nodeInPath);
+      }
+
+      if(nodeInPath == this.finishNode.label) {
+        finishNodeFound = true;
+      }
+
+      let elToDeleteIndex = nodesToVisit.findIndex(el => el == nodeInPath);
+      nodesToVisit.splice(elToDeleteIndex, 1);
+      i = i + 1;
+    }
+    console.log(nodesToVisit)
+  }
+
+  nextStep() {
+    let nodeSelected = this.coloredPath[0];
+    let pathNodes = this.coloredNodesOrder[0];
+    this.coloredPath.shift();
+    this.coloredNodesOrder.shift();
+
+    pathNodes.forEach(_node => {
+    var nodeToColor = this.canvasObjects.find((el: { label: number; }) => el.label == _node);
+    nodeToColor.set('fill', 'grey');
+    });
+
+    var nodeToColor = this.canvasObjects.find((el: { label: number; }) => el.label == nodeSelected);
+    nodeToColor.set('fill', '#14B8A6');
+
+    this.canvas.renderAll();
+    if(!this.coloredPath.length) {
+      this.algorithmFinished = true;
+    }
   }
 }
+
+interface IRectExtented extends fabric.IRectOptions {
+  label: number;
+  coordi: number;
+  coordj: number;
+}
+
+
 
