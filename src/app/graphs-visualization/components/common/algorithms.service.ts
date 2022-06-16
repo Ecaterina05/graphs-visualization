@@ -172,6 +172,7 @@ export class AlgorithmsService {
       this.coloredNodesOrder[i] = [];
       this.coloredNodesOrder[i].push(array[i]);
     }
+    this.coloredNodesOrder.shift();
 
     return this.coloredNodesOrder;
   }

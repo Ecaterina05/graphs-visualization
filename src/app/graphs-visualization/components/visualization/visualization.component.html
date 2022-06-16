@@ -75,11 +75,6 @@
                 <p-inputNumber class="w-25" [(ngModel)]="finishNode" buttonLayout="vertical" inputId="finishNode">
                 </p-inputNumber>
               </div>
-              <div *ngIf="selectedGraphType2 ==='ponderat' && selectedAlgorithm.name === 'Yen'" class="row" style="justify-content: center;">
-                <p style="width: 55%;  margin-top: 1rem !important;">Alege câte drumuri de cost minim doresti să vizualizezi de la nodul start la nodul finish:</p>
-                <p-inputNumber style="height: 44%; margin-top: 2rem !important;" class="w-25" [(ngModel)]="kPaths" buttonLayout="vertical" inputId="kPaths">
-                </p-inputNumber>
-              </div>
             </div>
             <div class="col-6" style="align-self: center; text-align: center;">
               <button pButton type="button" (click)="startAlgorithm()">Start</button>
@@ -89,7 +84,7 @@
             <div class="col-6" style="align-self: center; text-align: center;">
               <p style="margin-top: 1rem !important; color: red;">Atenție! Acest algoritm nu se poate aplica pe un graf cu ponderi negative!</p>
             </div>
-        </div>
+          </div>
           <div *ngIf="reachNextStep && !algorithmFinished">
             <div class="row" style="padding-top: 10%;">
               <div class="col-6" style="text-align: center;">
@@ -100,6 +95,61 @@
           <div *ngIf="algorithmFinished">
             <div class="row" style="padding-top: 10%;">
               <div class="col-6" style="align-self: center; text-align: center; color: #14B8A6; font-size: x-large;"><strong>Algoritmul a luat sfârșit!</strong></div>
+            </div>
+          </div>
+          <div *ngIf="bfsVisualizationStarted">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Lista de noduri adăugate la parcurgere: {{nodesAdded}}</p>
+              </div>
+            </div>
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Nodurile adăugate la acest pas: {{nodesToAdd}}</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="dfsVisualizationStarted">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Lista de noduri adăugate la parcurgere: {{nodesAdded}}</p>
+              </div>
+            </div>
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Nodurile adăugate la acest pas: {{nodesToAdd}}</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="dijkstraVisualizationStarted">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Lista de noduri adăugate la parcurgere: {{nodesAdded}}</p>
+              </div>
+            </div>
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Nodurile adăugate la acest pas: {{nodesToAdd}}</p>
+              </div>
+            </div>
+            <div *ngIf="nodesToAdd === 'Nodurile au fost parcurse'" class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Drumul minim de la nodul {{startNode}} la nodul {{finishNode}}: {{nodesPath}}</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="bfVisualizationStarted">
+            <div class="row" style="padding-top: 10%;">
+              <div class="col-12">
+                <p style="align-self: center; text-align: center;">Parcurgerea drumului minim de la nodul {{startNode}} la nodul {{finishNode}}: {{nodesAdded}}</p>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="selectedGraphType && selectedGraphType2">
+            <div class="row" style="position: absolute; bottom: 0; left: 75%">
+              <div class="col-12" style="text-align: center;">
+                <button pButton type="button" (click)="restartVisualization()">Restart</button>
+              </div>
             </div>
           </div>
         </div>

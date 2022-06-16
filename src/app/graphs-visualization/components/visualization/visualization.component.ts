@@ -50,9 +50,17 @@ export class VisualizationComponent implements OnInit {
   alertNegativeWeights = false;
   displayNegativeWeightsError = false;
 
+  bfsVisualizationStarted = false;
+  dfsVisualizationStarted = false;
+  dijkstraVisualizationStarted = false;
+  bfVisualizationStarted = false;
+
   startNode: number | undefined;
   finishNode: number | undefined;
-  kPaths: number | undefined;
+
+  nodesAdded: string = '';
+  nodesToAdd: string = '';
+  nodesPath: string = '';
 
   @HostListener('window:resize')
   onResize() {
@@ -352,6 +360,32 @@ export class VisualizationComponent implements OnInit {
     }
     this.algorithmStarted = false;
     this.reachNextStep = true;
+
+    if(this.selectedAlgorithm.name === 'BFS') {
+      this.bfsVisualizationStarted = true;
+      this.nodesAdded = this.startNode + '';
+      this.nodesToAdd = this.startNode + '';
+    }
+
+    if(this.selectedAlgorithm.name === 'DFS') {
+      this.dfsVisualizationStarted = true;
+      this.nodesAdded = this.startNode + '';
+      this.nodesToAdd = this.startNode + '';
+    }
+
+    if(this.selectedAlgorithm.name === 'Dijkstra') {
+      this.dijkstraVisualizationStarted = true;
+      this.nodesAdded = this.startNode + '';
+      this.nodesToAdd = this.startNode + '';
+      var arr = this.coloredPath.reverse();
+      this.nodesPath = arr + '';
+    }
+
+    if(this.selectedAlgorithm.name === 'Bellman-Ford') {
+      this.bfVisualizationStarted = true;
+      this.nodesAdded = this.startNode + '';
+      this.nodesToAdd = this.startNode + '';
+    }
   }
 
   nextStep() {
@@ -360,6 +394,8 @@ export class VisualizationComponent implements OnInit {
         node._objects[0].set('fill', '#D3D3D3');
       });
       var nodesToColor = this.coloredNodesOrder[0];
+      this.nodesAdded = this.nodesAdded + ',' + this.coloredNodesOrder[0];
+      this.nodesToAdd = this.coloredNodesOrder[0] + '';
       this.coloredNodesOrder.shift();
       nodesToColor.forEach(_node => {
         var nodeToColor = this.canvasNodes.find(node => node.id == _node);
@@ -380,7 +416,12 @@ export class VisualizationComponent implements OnInit {
           this.canvas.renderAll();
         })
       }
+      this.nodesToAdd = 'Nodurile au fost parcurse';
     }
+  }
+
+  restartVisualization() {
+    
   }
 }
 

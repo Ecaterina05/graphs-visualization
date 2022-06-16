@@ -25,7 +25,7 @@ export class GraphsVisualizationComponent implements OnInit {
     this.selected = 'Applications';
   }
 
-  goToSaved() {
-    this.selected = 'Saved';
+  signOut() {
+    
   }
 }

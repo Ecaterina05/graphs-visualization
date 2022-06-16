@@ -27,7 +27,7 @@ export class ApplicationsComponent implements OnInit {
   algorithmFinished = false;;
 
   board = [
-    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [ -2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [ 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
     [ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
     [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 0],
@@ -36,7 +36,7 @@ export class ApplicationsComponent implements OnInit {
     [ 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
     [ 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
     [ 1, 0, 1, 0, 1, 0, 0, 1, 1, 0],
-    [ 1, -2, 1, -1, 1, 1, 0, 0, 0, 0]
+    [ 1, 0, 1, -1, 1, 1, 0, 0, 0, 0]
   ];
 
   @HostListener('window:resize')
@@ -268,7 +268,7 @@ export class ApplicationsComponent implements OnInit {
       }
 
       const indexInOpenList = open_list.findIndex(el => el == nodeInPath);
-      open_list.slice(indexInOpenList, 1);
+      open_list.splice(indexInOpenList, 1);
       i = i + 1;
     }
     closed_list.shift();
@@ -279,62 +279,50 @@ export class ApplicationsComponent implements OnInit {
     let finishNodeFound = false;
     this.algorithmSelected = true;
 
-    let nodesToVisit: number[] = [];
+    let nodesToVisit: Array<{ node: number, dist: number }> = [];
+    let distances: Array<{ node: number, distance: number }> = [];
     let visitedNode: any[] = [];
-    let nodeInfo: Array<{ node: number, distance: number, father: number }> = [];
 
     this.adjacencyList.forEach(el => {
       if(el.label != this.startNode.label) {
-        nodesToVisit.push(el.label);
-        nodeInfo.push({node: el.label, distance: Number.MAX_VALUE, father: -10});
+        distances.push({node: el.label, distance: Number.MAX_VALUE});
       }
     });
 
-    let nodeInPath = this.startNode.label;
-    visitedNode.push(nodeInPath);
-    nodeInfo.push({node: nodeInPath, distance: 0, father: -10});
+    nodesToVisit.push({node: this.startNode.label, dist: 0});
+    visitedNode.push(this.startNode.label);
     let i = 0;
 
     while(nodesToVisit.length && finishNodeFound == false) {
-      let nodeInList = this.adjacencyList.find(node => node.label == nodeInPath);
-      let nodeExtensions = nodeInList?.neighbours;
-      let dist = nodeInfo.find(el => el.node == nodeInPath);
-
-      let unvisitedNeighbours: any[] = [];
-      this.coloredNodesOrder[i] = [];
-      nodeExtensions?.forEach(ext => {
-        if(!visitedNode.find(el => el == ext.neighbour.label)) {
-          let distance_var = nodeInfo.find(el => el.node == ext.neighbour.label);
-          if(dist!.distance + ext.weight < distance_var!.distance) {
-            distance_var!.distance = dist!.distance + ext.weight;
-          }
-          unvisitedNeighbours.push(distance_var);
-          this.coloredNodesOrder[i].push(distance_var!.node);
-        }
-      });
-
-      let selectedNode;
-      if(unvisitedNeighbours.length) {
-        unvisitedNeighbours.sort((a,b) => a.distance - b.distance);
-        selectedNode = unvisitedNeighbours[0];
-      }
-
-      if(selectedNode && selectedNode.distance != Number.MAX_VALUE) {
-        selectedNode.father = nodeInPath;
-        visitedNode.push(selectedNode.node);
-        nodeInPath = selectedNode.node;
-        this.coloredPath.push(nodeInPath);
-      }
+      let nodeInPath = nodesToVisit[0].node;
+      let dist = nodesToVisit[0].dist;
+      nodesToVisit.shift();
+      this.coloredPath.push(nodeInPath);
 
       if(nodeInPath == this.finishNode.label) {
         finishNodeFound = true;
       }
 
-      let elToDeleteIndex = nodesToVisit.findIndex(el => el == nodeInPath);
-      nodesToVisit.splice(elToDeleteIndex, 1);
+      let nodeInList = this.adjacencyList.find(node => node.label == nodeInPath);
+      let nodeExtensions = nodeInList?.neighbours;
+
+      this.coloredNodesOrder[i] = [];
+      nodeExtensions?.forEach(ext => {
+        if(!visitedNode.find(el => el == ext.neighbour.label)) {
+          let distance_var = distances.find(el => el.node == ext.neighbour.label);
+          if(dist + ext.weight < distance_var!.distance) {
+            distance_var!.distance = dist + ext.weight;
+          }
+          nodesToVisit.push({node: distance_var!.node, dist: distance_var!.distance});
+          visitedNode.push(distance_var!.node);
+          this.coloredNodesOrder[i].push(distance_var!.node);
+        }
+      });
+
+      nodesToVisit.sort((a,b) => a.dist- b.dist);
+
       i = i + 1;
     }
-    console.log(nodesToVisit)
   }
 
   nextStep() {
@@ -355,6 +343,10 @@ export class ApplicationsComponent implements OnInit {
     if(!this.coloredPath.length) {
       this.algorithmFinished = true;
     }
+  }
+
+  restartLabyrinth() {
+    
   }
 }
 
