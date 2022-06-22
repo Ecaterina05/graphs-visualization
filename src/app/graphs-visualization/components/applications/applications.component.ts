@@ -346,7 +346,7 @@ export class ApplicationsComponent implements OnInit {
   }
 
   restartLabyrinth() {
-    
+
   }
 }
 

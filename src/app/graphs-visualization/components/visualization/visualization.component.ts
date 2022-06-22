@@ -421,20 +421,23 @@ export class VisualizationComponent implements OnInit {
   }
 
   restartVisualization() {
-    
+
   }
 }
 
-interface IGroupWithId extends fabric.IGroupOptions {
+interface IGroupWithId extends
+fabric.IGroupOptions {
   id: number;
 }
 
-interface ILineWithId extends fabric.ILineOptions {
+interface ILineWithId extends
+fabric.ILineOptions {
   id: {source: number, target: number};
   weight: number;
 }
 
-interface ILineGroupWithId extends fabric.IGroupOptions {
+interface ILineGroupWithId extends
+fabric.IGroupOptions {
   id: {source: number, target: number};
   weight: number;
 }

@@ -40,7 +40,5 @@ export class LoginComponent implements OnInit {
     if(!formValues.password) {
       this.passwordError = true;
     }
-
-    console.log('heeeeeeeeey');
   }
 }

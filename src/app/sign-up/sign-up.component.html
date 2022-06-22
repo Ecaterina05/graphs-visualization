@@ -46,8 +46,8 @@
             <small *ngIf="signInForm.get('confirmPassword')?.errors?.['confirmedValidator']" id="confirmPasswordError" class="p-error">Parolele nu corespund.</small>
         </div>
         <div class="row classButtons">
-          <button pButton type="button" (click)="onCancel()" label="Cancel" class="p-button-secondary col m-2"></button>
-          <button pButton type="submit" [disabled]="signInForm.invalid" label="Save" class="p-button-success col m-2"></button>
+          <button pButton type="button" (click)="onCancel()" label="Renunțare" class="p-button-secondary col m-2"></button>
+          <button pButton type="submit" [disabled]="signInForm.invalid" label="Salvare" class="p-button-success col m-2"></button>
         </div>
     </form>
     <ng-template pTemplate="footer"> </ng-template>
