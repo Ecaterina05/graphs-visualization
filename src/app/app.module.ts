@@ -12,6 +12,7 @@ import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {PasswordModule} from 'primeng/password';
 
+import { HttpClientModule } from  '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { TheoryComponent } from './graphs-visualization/components/theory/theory.component';
@@ -19,6 +20,7 @@ import { TheoryComponent } from './graphs-visualization/components/theory/theory
 @NgModule({
   declarations: [AppComponent, LoginComponent, SignUpComponent],
   imports: [
+    HttpClientModule,
     CardModule,
     FormsModule,
     ReactiveFormsModule,

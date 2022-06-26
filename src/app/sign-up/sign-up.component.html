@@ -21,7 +21,6 @@
                 [ngClass]="{'is-invalid' : signInForm.get('username')?.invalid && signInForm.get('username')?.touched}"/>
             <label for="username">Nume utilizator</label>
             <div class="invalid-feedback">Numele de utilizator este obligatoriu!</div>
-            <!-- <small id="usernameError" class="p-error">Numele de utilizator nu este disponibil.</small> -->
         </div>
         <div class="form-floating padding form-group row">
             <input id="email" pInputText type="email" class="form-control login-user-input-email auth-input" formControlName="email"
