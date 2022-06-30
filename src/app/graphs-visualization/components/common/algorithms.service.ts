@@ -62,74 +62,170 @@ export class AlgorithmsService {
     }
   }
 
-  Dijkstra(adjacencyList: Array<Array<{ label: number, weight: number }>>, startNode: number, finishNode: number) {
-    let distance: number[] = [];
-    let visitedNode: boolean[] = [];
-    let father: number[] = [];
-    let distanceMarkedAsInfinite: boolean[] = [];
+  // Dijkstra(adjacencyList: Array<Array<{ label: number, weight: number }>>, startNode: number, finishNode: number) {
+  //   let distance: number[] = [];
+  //   let visitedNode: boolean[] = [];
+  //   let father: number[] = [];
+  //   let distanceMarkedAsInfinite: boolean[] = [];
 
-    let nodeAndDistance: Array<{ node: number, distance: number }> = [];
-    let numberOfNodes = adjacencyList.length - 1;
+  //   let nodeAndDistance: Array<{ node: number, distance: number }> = [];
+  //   let numberOfNodes = adjacencyList.length - 1;
+
+  //   for(let i=1; i<adjacencyList.length; i++) {
+  //     if(i != startNode) {
+  //       nodeAndDistance.push({node: i, distance: Number.MAX_VALUE});
+  //       distance[i] = Number.MAX_VALUE;
+  //       distanceMarkedAsInfinite[i] = true;
+  //       visitedNode[i] = false;
+  //     }
+  //   }
+
+  //   distance[startNode] = 0;
+  //   console.log(distance);
+
+  //   let i = 0;
+  //   let node = startNode;
+  //   visitedNode[node] = true;
+
+  //   while(numberOfNodes != 0) {
+  //     this.coloredNodesOrder[i] = [];
+
+  //     adjacencyList[node].forEach((neighbour: {label: number ,  weight: number}) => {
+  //       if(distance[node] + neighbour.weight < distance[neighbour.label]) {
+  //         distance[neighbour.label] = distance[node] + neighbour.weight;
+  //         distanceMarkedAsInfinite[neighbour.label] = false;
+  //         nodeAndDistance.forEach(el => {
+  //           if(el.node == neighbour.label) {
+  //             el.distance = distance[neighbour.label];
+  //           }
+  //         });
+  //       }
+  //     });
+
+  //     let unvisitedNodes: Array<{ node: number, distance: number }> = [];
+  //     nodeAndDistance.forEach(el => {
+  //       if(visitedNode[el.node] == false) {
+  //         unvisitedNodes.push(el);
+  //       }
+  //     });
+
+  //     // distance_f.sort((a,b) => a.distance - b.distance);
+  //     // nodeInPath = distance_f[0].nodeLabel;
+  //     // closed_list.push(nodeInPath);
+  //     // distance_f.shift();
+
+  //     unvisitedNodes.sort((a,b) => a.distance - b.distance);
+  //     let nodeSelectedNext = unvisitedNodes[0].node;
+  //     unvisitedNodes.shift();
+
+  //     // let nodeSelectedNext = unvisitedNodes[0];
+  //     // unvisitedNodes.shift();
+  //     // unvisitedNodes.forEach(el => {
+  //     //   if(el.distance < nodeSelectedNext.distance && visitedNode[el.node] == false) {
+  //     //     nodeSelectedNext = el;
+  //     //   }
+  //     // });
+  //     if(nodeSelectedNext && distanceMarkedAsInfinite[nodeSelectedNext] == false) {
+  //       father[nodeSelectedNext] = node;
+  //       visitedNode[nodeSelectedNext] = true;
+  //       node = nodeSelectedNext;
+  //       this.coloredNodesOrder[i].push(node);
+  //       i = i + 1;
+  //     }
+  //     numberOfNodes--;
+  //   }
+
+  //   console.log(father);
+  //   this.coloredPath.push(finishNode);
+  //   var nodeInFather = finishNode;
+  //   var startNodeNotFound = true;
+
+  //   // while(startNodeNotFound) {
+  //   //   var fatherChosen = father[nodeInFather];
+  //   //   this.coloredPath.push(fatherChosen);
+  //   //   if(fatherChosen == startNode) {
+  //   //     startNodeNotFound = false;
+  //   //   }
+  //   // }
+
+  //   // while(nodeInFather != startNode) {
+  //   //   var fatherChosen = father[nodeInFather];
+  //   //   this.coloredPath.push(fatherChosen);
+  //   //   nodeInFather = fatherChosen;
+  //   // }
+
+  //   console.log(this.coloredPath);
+
+  //   return [this.coloredNodesOrder, this.coloredPath];
+  // }
+
+  Dijkstra(adjacencyList: Array<Array<{ label: number, weight: number }>>, startNode: number, finishNode: number) {
+    this.coloredPath = [];
+    let adjacencyListCustom: Array<{ label: number, neighbours: Array<{ label: number, weight : number }> }> = [];
+    let father:  Array<{ label: number, father : number }> = [];
 
     for(let i=1; i<adjacencyList.length; i++) {
-      if(i != startNode) {
-        nodeAndDistance.push({node: i, distance: Number.MAX_VALUE});
-        distance[i] = Number.MAX_VALUE;
-        distanceMarkedAsInfinite[i] = true;
-        visitedNode[i] = false;
-      }
+      var neighbours = adjacencyList[i];
+      father.push({label: i, father: -1});
+      adjacencyListCustom.push({label: i, neighbours: neighbours})
     }
 
-    distance[startNode] = 0;
+    let nodesToVisit: Array<{ node: number, dist: number }> = [];
+    let distances: Array<{ node: number, distance: number }> = [];
+    let visitedNode: any[] = [];
 
-    let i = 0;
-    let node = startNode;
-    visitedNode[node] = true;
-
-    while(numberOfNodes != 0) {
-      this.coloredNodesOrder[i] = [];
-
-      adjacencyList[node].forEach((neighbour: {label: number ,  weight: number}) => {
-        if(distance[node] + neighbour.weight < distance[neighbour.label]) {
-          distance[neighbour.label] = distance[node] + neighbour.weight;
-          distanceMarkedAsInfinite[neighbour.label] = false;
-          nodeAndDistance.forEach(el => {
-            if(el.node == neighbour.label) {
-              el.distance = distance[neighbour.label];
-            }
-          });
-        }
-      });
-
-      let unvisitedNodes: Array<{ node: number, distance: number }> = [];
-      nodeAndDistance.forEach(el => {
-        if(visitedNode[el.node] == false) {
-          unvisitedNodes.push(el);
-        }
-      });
-      let nodeSelectedNext = unvisitedNodes[0];
-      unvisitedNodes.shift();
-      unvisitedNodes.forEach(el => {
-        if(el.distance < nodeSelectedNext.distance && visitedNode[el.node] == false) {
-          nodeSelectedNext = el;
-        }
-      });
-      if(nodeSelectedNext && distanceMarkedAsInfinite[nodeSelectedNext.node] == false) {
-        father[nodeSelectedNext.node] = node;
-        visitedNode[nodeSelectedNext.node] = true;
-        node = nodeSelectedNext.node;
-        this.coloredNodesOrder[i].push(node);
-        i = i + 1;
+    adjacencyListCustom.forEach(el => {
+      if(el.label != startNode) {
+        distances.push({node: el.label, distance: Number.MAX_VALUE});
       }
-      numberOfNodes--;
+    });
+
+    nodesToVisit.push({node: startNode, dist: 0});
+    visitedNode.push(startNode);
+    let i = 0;
+
+    while(nodesToVisit.length) {
+      let nodeInPath = nodesToVisit[0].node;
+      visitedNode.push(nodeInPath);
+      this.coloredNodesOrder[i] = [];
+      this.coloredNodesOrder[i].push(nodeInPath);
+
+      let dist = nodesToVisit[0].dist;
+      nodesToVisit.shift();
+
+      let nodeInList = adjacencyListCustom.find(node => node.label == nodeInPath);
+      let nodeExtensions = nodeInList?.neighbours;
+
+      nodeExtensions?.forEach(ext => {
+        const elementVisitedIndex = visitedNode.findIndex(el => el == ext.label);
+        if(elementVisitedIndex === -1) {
+          let distance_var = distances.find(el => el.node == ext.label);
+          if(dist + ext.weight < distance_var!.distance) {
+            distance_var!.distance = dist + ext.weight;
+            var nodeInFather = father.find(el => el.label == ext.label);
+            nodeInFather!.father = nodeInPath;
+          }
+          nodesToVisit.push({node: distance_var!.node, dist: distance_var!.distance});
+        }
+      });
+
+      nodesToVisit.sort((a,b) => a.dist - b.dist);
+
+      i = i + 1;
     }
 
     this.coloredPath.push(finishNode);
-    while(finishNode != startNode) {
-      finishNode = father[finishNode];
-      this.coloredPath.push(finishNode);
+    var nodeInFather = finishNode;
+
+    while(nodeInFather != startNode) {
+    var elementInFather = father.find(el => el.label == nodeInFather);
+    var fatherChosen = elementInFather!.father;
+    this.coloredPath.push(fatherChosen);
+    nodeInFather = fatherChosen;
     }
 
+    this.coloredNodesOrder.shift();
+    this.coloredNodesOrder.pop();
     return [this.coloredNodesOrder, this.coloredPath];
   }
 

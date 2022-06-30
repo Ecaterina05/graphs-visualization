@@ -1,4 +1,3 @@
-const path = require("path")
 const express = require('express');
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
@@ -6,8 +5,6 @@ const mongoose = require('mongoose');
 const usersRoutes = require("./users");
 
 const app = express();
-
-// mongodb+srv://ecaterina:12q12q@cluster0.p9ros.mongodb.net/node-angular?retryWrites=true&w=majority
 
 mongoose.connect("mongodb+srv://ecaterinab:23w23w@ecaterinacluster.3slkd.mongodb.net/?retryWrites=true&w=majority")
   .then(() => {
@@ -19,7 +16,6 @@ mongoose.connect("mongodb+srv://ecaterinab:23w23w@ecaterinacluster.3slkd.mongodb
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use("/images", express.static(path.join("backend/images")));
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");

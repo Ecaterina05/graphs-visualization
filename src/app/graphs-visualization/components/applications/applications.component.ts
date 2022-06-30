@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { fabric } from 'fabric';
+import { labyrinthsTemplates } from './labyrinthsTemplates';
 
 @Component({
   selector: 'app-applications',
@@ -24,20 +25,26 @@ export class ApplicationsComponent implements OnInit {
   finishCenterX!: number;
   finishCenterY!: number;
 
-  algorithmFinished = false;;
+  algorithmFinished = false;
+  labyrinthGenerated = false;
 
-  board = [
-    [ -2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [ 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
-    [ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-    [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 0],
-    [ 0, 1, 1, 0, 0, 0, 1, 0, 1, 0],
-    [ 0, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-    [ 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-    [ 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
-    [ 1, 0, 1, 0, 1, 0, 0, 1, 1, 0],
-    [ 1, 0, 1, -1, 1, 1, 0, 0, 0, 0]
-  ];
+  labyrinthsTemplates = labyrinthsTemplates;
+  board!: Array<Array<number>>;
+
+  // board = [
+  //   [ -2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [ 1, 1, 1, 0, 1, 1, 1, 1, 1, 0],
+  //   [ 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+  //   [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 0],
+  //   [ 0, 1, 1, 0, 0, 0, 1, 0, 1, 0],
+  //   [ 0, 0, 1, 1, 1, 1, 1, 0, 1, 0],
+  //   [ 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+  //   [ 1, 0, 1, 0, 1, 0, 1, 0, 0, 0],
+  //   [ 1, 0, 1, 0, 1, 0, 0, 1, 1, 0],
+  //   [ 1, 0, 1, -1, 1, 1, 0, 0, 0, 0]
+  // ];
+  width!: number;
+  height!: number;
 
   @HostListener('window:resize')
   onResize() {
@@ -48,6 +55,8 @@ export class ApplicationsComponent implements OnInit {
     }
     this.canvas.setHeight(height);
     this.canvas.setWidth(width);
+    this.width = width;
+    this.height = height;
   }
 
   constructor() { }
@@ -68,19 +77,43 @@ export class ApplicationsComponent implements OnInit {
     this.canvas = new fabric.Canvas("canvasLabyrinth");
     this.canvas.setHeight(height);
     this.canvas.setWidth(width);
+    this.width = width;
+    this.height = height;
+  }
 
-    var blockWidth = width/(this.board.length);
-    var blockHeight = height/((this.board.length))
+  randomIntFromInterval(min : number, max : number) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  generateLabyrinth() {
+    this.labyrinthGenerated = true;
+    this.canvas.clear();
+    this.adjacencyList = [];
+    this.temporaryNeighboursCoords = [];
+    this.neighbours = [];
+
+    this.coloredNodesOrder = [[]];
+    this.coloredPath = [];
+
+    let index = this.randomIntFromInterval(0,4);
+    this.board = labyrinthsTemplates[index];
+
+    this.drawLabyrinth(this.board);
+  }
+
+  drawLabyrinth(board: Array<Array<number>>) {
+    var blockWidth = this.width/(board.length);
+    var blockHeight = this.height/((board.length))
     var squareLeft = -blockWidth;
     var squareTop = -blockHeight;
 
     let k: number = 0;
-    for(let i = 0; i < this.board.length; i++){
+    for(let i = 0; i < board.length; i++){
       squareTop = squareTop + blockHeight;
       squareLeft = -blockWidth;
-      for(let j = 0; j < this.board[i].length; j++){
+      for(let j = 0; j < board[i].length; j++){
         squareLeft = squareLeft + blockWidth;
-        if(this.board[i][j] === 1){
+        if(board[i][j] === 1){
           var square = new fabric.Rect({
             selectable: false,
             top: squareTop,
@@ -94,7 +127,7 @@ export class ApplicationsComponent implements OnInit {
           } as IRectExtented);
           this.canvas.add(square);
         }
-        if(this.board[i][j] === 0) {
+        if(board[i][j] === 0) {
           var square = new fabric.Rect({
             selectable: false,
             top: squareTop,
@@ -108,7 +141,7 @@ export class ApplicationsComponent implements OnInit {
           } as IRectExtented);
           this.canvas.add(square);
         }
-        if(this.board[i][j] === -1) {
+        if(board[i][j] === -1) {
           var square = new fabric.Rect({
             selectable: false,
             top: squareTop,
@@ -122,7 +155,7 @@ export class ApplicationsComponent implements OnInit {
           } as IRectExtented);
           this.canvas.add(square);
         }
-        if(this.board[i][j] === -2) {
+        if(board[i][j] === -2) {
           var square = new fabric.Rect({
             selectable: false,
             top: squareTop,
@@ -149,46 +182,46 @@ export class ApplicationsComponent implements OnInit {
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
         }
-        if(nodeSelected.coordi == 0 && nodeSelected.coordj == this.board.length-1) {
+        if(nodeSelected.coordi == 0 && nodeSelected.coordj == board.length-1) {
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
         }
-        if(nodeSelected.coordi == this.board.length-1 && nodeSelected.coordj == 0) {
+        if(nodeSelected.coordi == board.length-1 && nodeSelected.coordj == 0) {
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
         }
-        if(nodeSelected.coordi == this.board.length-1 && nodeSelected.coordj == this.board.length-1) {
+        if(nodeSelected.coordi == board.length-1 && nodeSelected.coordj == board.length-1) {
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
           this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
         }
-        for(let i=1; i<this.board.length-1; i++) {
+        for(let i=1; i<board.length-1; i++) {
           if(nodeSelected.coordi == i && nodeSelected.coordj == 0) {
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
           }
 
-          if(nodeSelected.coordi == i && nodeSelected.coordj == this.board.length-1) {
+          if(nodeSelected.coordi == i && nodeSelected.coordj == board.length-1) {
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
           }
         }
-        for(let j=1; j<this.board.length-1; j++) {
+        for(let j=1; j<board.length-1; j++) {
           if(nodeSelected.coordi == 0 && nodeSelected.coordj == j) {
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1 });
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi+1, nghj: nodeSelected.coordj});
           }
 
-          if(nodeSelected.coordi == this.board.length-1 && nodeSelected.coordj == j) {
+          if(nodeSelected.coordi == board.length-1 && nodeSelected.coordj == j) {
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
             this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi-1, nghj: nodeSelected.coordj});
           }
         }
-        for(let i=1; i<this.board.length-1; i++) {
-          for(let j=1; j<this.board.length-1; j++) {
+        for(let i=1; i<board.length-1; i++) {
+          for(let j=1; j<board.length-1; j++) {
             if(nodeSelected.coordi == i && nodeSelected.coordj == j) {
               this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj-1});
               this.temporaryNeighboursCoords.push({nghi: nodeSelected.coordi, nghj: nodeSelected.coordj+1});
@@ -247,13 +280,22 @@ export class ApplicationsComponent implements OnInit {
 
       this.coloredNodesOrder[i] = [];
       nodeExtensions?.forEach(ext => {
-          if(!closed_list.find(el => el == ext.neighbour.label)) {
+        const elementInClosedListIndex = closed_list.findIndex(el => el == ext.neighbour.label);
+          if(elementInClosedListIndex === -1) {
             const g_element = g.find(el => el.nodeLabel == ext.neighbour.label);
             const g_var = g_element!.weight + ext.weight;
             g_element!.weight = g_var;
             const h_var = h.find(el => el.nodeLabel == ext.neighbour.label)!.estimation;
             const d = g_var + h_var;
-            distance_f.push({nodeLabel: ext.neighbour.label, distance: d, father: nodeInPath});
+            const elementInDistance_fIndex = distance_f.findIndex(el => el.nodeLabel == ext.neighbour.label);
+            if(elementInDistance_fIndex > -1) {
+              if(d < distance_f[elementInDistance_fIndex].distance) {
+                distance_f.splice(elementInClosedListIndex, 1);
+                distance_f.push({nodeLabel: ext.neighbour.label, distance: d, father: nodeInPath});
+              }
+            } else {
+              distance_f.push({nodeLabel: ext.neighbour.label, distance: d, father: nodeInPath});
+            }
             this.coloredNodesOrder[i].push(ext.neighbour.label);
           }
         });
@@ -308,7 +350,8 @@ export class ApplicationsComponent implements OnInit {
 
       this.coloredNodesOrder[i] = [];
       nodeExtensions?.forEach(ext => {
-        if(!visitedNode.find(el => el == ext.neighbour.label)) {
+        const elementVisitedIndex = visitedNode.findIndex(el => el == ext.neighbour.label);
+        if(elementVisitedIndex === -1) {
           let distance_var = distances.find(el => el.node == ext.neighbour.label);
           if(dist + ext.weight < distance_var!.distance) {
             distance_var!.distance = dist + ext.weight;
@@ -346,7 +389,17 @@ export class ApplicationsComponent implements OnInit {
   }
 
   restartLabyrinth() {
+    this.canvas.clear();
+    this.adjacencyList = [];
+    this.temporaryNeighboursCoords = [];
+    this.neighbours = [];
 
+    this.coloredNodesOrder = [[]];
+    this.coloredPath = [];
+    this.algorithmSelected = false;
+    this.algorithmFinished = false;
+
+    this.drawLabyrinth(this.board);
   }
 }
 

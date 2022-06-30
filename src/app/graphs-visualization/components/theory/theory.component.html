@@ -73,4 +73,255 @@
         <div class="col-4 directedGraph"></div>
       </div>
     </p-card>
+    <h5 class="pt-3">Moduri de a reprezenta un graf</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Matricea de adiacență</span> reprezintă o matrice 2D de dimensiunea
+              V x V unde V este numărul de noduri dintr-un graf. Fie matricea 2D adj[][],
+              unde un slot adj[i][j] = 1 indică faptul că există o muchie de la vârful i la vârful j.
+            </p>
+          </li>
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Lista de adiacență</span> reprezintă un vector de liste în care mărimea
+              vectorului este egală cu numărul de noduri ale grafului. Dacă notăm vectorul
+              respectiv cu adj[], un slot adj[i] reprezintă lista de noduri adiacente celui de-al
+              i-lea nod.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Algoritmi de căutare parcurgere în grafuri</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Algoritmii de căutare în graf</span> parcurg un graf în căutarea informațiilor generale
+              sau a unui rezultat specific. Aceștia se străduiesc să acopere cât mai mult
+              din graf posibil, dar nu există nicio garanție că rutele pe care le parcurg sunt
+              cele mai eficiente. Algoritmii de căutare în graf sunt folosiți frecvent ca <span style="color: #14B8A6;">parte a
+              algoritmilor mai mari</span>.
+            </p>
+          </li>
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Algoritmii de parcurgere în graf</span> (cu scopul găsirii unor căi între noduri) se construiesc pe baza algoritmilor
+              de căutare în graf și explorează rutele dintre noduri, începând de la un nod și traversând muchii până când
+              destinația a fost atinsă. Acești algoritmi găsesc calea cea mai ieftină și mai scurtă în ceea ce privește numărul
+              de salturi sau greutatea. Greutățile pot fi orice măsurat, cum ar fi timpul, distanța, capacitatea sau costul.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">BFS</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Breadth First Search (BFS)</span> este o metodă bazată pe vârfuri pentru a determina
+              calea cea mai scurtă dintr-un graf. Utilizează o structură de date de
+              tip coadă <span style="color: #14B8A6;">(queue)</span>, care urmează principiul primul intrat, primul ieșit. În BFS,
+              un vârf este vizitat și marcat la un moment dat, apoi vecinii săi sunt vizitați și
+              plasați în coadă.
+            </p>
+          </li>
+          <li>
+            <p>
+              BFS poate fi folosit pe cont propriu, dar este folosit de obicei
+              ca bază pentru alți algoritmi mai orientați spre obiective și mai complecși.
+              Metoda BFS este utilizată într-o varietate de aplicații, inclusiv pentru <span style="color: #14B8A6;">determinarea
+              celei mai scurte căi (Shortest Path)</span> , <span style="color: #14B8A6;">componentelor conexe (Connected
+              Components)</span>, <span style="color: #14B8A6;">măsurilor de centralitate (Closeness Centrality)</span>. Poate fi folosită
+              și pentru a calcula debitul maxim într-o rețea de flux sau pentru a descoperi calea
+              cea mai scurtă între noduri.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">DFS</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Depth First Search (DFS)</span> este utilizată pentru a parcurge sau a explora
+              structuri de date, cum ar fi arbori și grafuri. Algoritmul pornește de la nodul
+              rădăcină (în cazul unui graf, orice nod aleatoriu poate fi folosit ca nod rădăcină)
+              și examinează fiecare ramură, pe cât posibil, înainte de backtracking. Această
+              metodă utilizează structura de date de tip stivă <span style="color: #14B8A6;">(stack)</span> bazată pe principiul ultimul
+              intrat primul ieșit sau primul intrat ultimul ieșit.
+            </p>
+          </li>
+          <li>
+            <p>
+              DFS, ca și BFS, poate fi folosit singur, deși este de obicei
+              mai utilizat ca parte a unui algoritm mai mare. Algoritmul DFS este utilizat
+              pentru determinarea <span style="color: #14B8A6;">componentelor conexe (Connected Components)</span> și <span style="color: #14B8A6;">componentelor
+              tare conexe (Strongly Connected)</span>, de exemplu. A fost dezvoltat ca
+              o abordare pentru rezolvarea labirinturilor, dar poate fi folosit și pentru a crea
+              aceste labirinturi.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Algoritmul lui Dijkstra</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Algoritmul lui Dijkstra</span> reprezintă un algoritm de parcurgere într-un graf
+              ponderat cu ajutorul căruia se poate găsi cea mai scurtă cale între nodurile grafului.
+              Particular, se pleacă de la un nod ales (numit nod sursă) și se găsește cea
+              mai scurtă cale de la acesta la restul nodurilor din graf.
+            </p>
+          </li>
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Dacă există o pondere negativă în graf, atunci algoritmul nu va funcționa corect.</span>
+              Odată ce un nod a fost marcat ca ”vizitat”, calea curentă către acel nod
+              este marcată ca cea mai scurtă cale pentru a ajunge la acel nod, iar ponderile
+              negative pot modifica acest lucru dacă costul total poate fi diminuat după ce a
+              avut loc acest pas.
+            </p>
+          </li>
+          <li>
+            <p>
+              Acest algoritm este folosit adesea în dispozitivele GPS pentru a descoperi calea
+              cea mai scurtă între locația curentă și destinație. Are o gamă largă de aplicații
+              industriale, în special în sectoarele care necesită modelare de rețea.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Algoritmul Bellman-Ford</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Algoritmul Bellman-Ford</span> reprezintă o extensie a algoritmului lui Dijkstra
+              și are ca scop să găsească costul minim de la nodul sursă la celelalte noduri, însă
+              diferența față de Dijkstra este că funcționează pe arce cu pondere negativă.
+            </p>
+          </li>
+          <li>
+            <p>
+              Bellman-Ford este, de asemenea, mai puțin
+              complicat decât Dijkstra și este bine potrivit pentru <span style="color: #14B8A6;">sistemele distribuite</span>.
+            </p>
+          </li>
+          <li>
+            <p>
+              Există cazuri particulare în care algoritmul lui Bellman-Ford nu funcționează corect,
+              mai exact în cazul în care există <span style="color: #14B8A6;">cicluri negative</span> în graful respectiv.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Algoritmul lui Yen</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              Există situații în viața reală când este nevoie de mai mult decât găsirea singurului
+              și celui mai scurt drum de la un punct la altul, iar algoritmi de tipul <span style="color: #14B8A6;">k
+              shortest paths (k cele mai scurte drumuri)</span>  fac acest lucru.
+            </p>
+          </li>
+          <li>
+            <p>
+              Un exemplu de utilizare al algoritmilor k shortest paths este
+              <span style="color: #14B8A6;">crearea unei rețele de tranzit care îmbunătățește
+              experiența pasagerilor în transportul public</span>.
+              Luând în considerare timpul de călătorie, se poate construi o astfel
+              de rețea de tranzit. Alte considerații, pe lângă timpul de călătorie, pot fi luate,
+              pe baza constrângerilor economice și geografice. Indiferent de modificările
+              parametrilor, algoritmii de tip k shortest paths găsesc cele mai optime soluții
+              care îndeplinesc practic toate cerințele utilizatorului.
+            </p>
+          </li>
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Algoritmul lui Yen</span> reprezintă unul din cei mai eficienți algoritmi care rezolvă
+              problema celor mai scurte k drumuri. Acesta funcționează pentru <span style="color: #14B8A6;">grafuri
+              cu ponderi pozitive</span> și are următorii pași (Notăm cu A1 primul cel mai scurt drum din cele k pe care algoritmul le găsește.
+              Algoritmul dispune de două liste, una notată cu A unde se adaugă cele k mai
+              scurte drumuri găsite de către algoritm și una notată cu B unde se adaugă și
+              compară drumurile găsite pentru fiecare pas k>1.):
+            </p>
+            <ul>
+              <li>
+                <p>
+                  <span style="color: #14B8A6;">Pas k=1:</span> Se găsește cel mai scurt drum A1 (din punct de vedere al costului)
+                  de la nodul sursă la nodul destinație folosind un algoritm eficient (vom
+                  folosi Dijkstra fiind deja prezentat anterior) și se adaugă în lista A;
+                </p>
+              </li>
+              <li>
+                <p>
+                  <span style="color: #14B8A6;">Pas k>1:</span> Se găsește drumul cel mai scurt Ak pornind de la drumul anterior
+                  Ak−1 care se presupune a fi cunoscut; se anulează (se șterge temporar
+                  sau se atribuie valoarea costului ∞) pe rând fiecare legătură (arc/muchie)
+                  din drumul Ak−1 și se aplică algoritmul ales (în cazul de față Dijkstra);
+                  drumul găsit după fiecare aplicare a algoritmului lui Dijkstra este adăugat
+                  în lista B, iar la final se compară toate drumurile din B după cost și se
+                  alege drumul de cost minim care este notat cu Ak și este adăugat în lista A;
+                  lista B este golită și se repetă algoritmul până sunt găsite cele k drumuri.
+                </p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </p-card>
+    <h5 class="pt-3">Algoritmul A*</h5>
+    <p-card class="theoryCardClass">
+      <div class="row">
+        <ul class="col-12">
+          <li>
+            <p>
+              Un alt algoritm important pentru parcurgerea grafurilor și căutarea celor mai
+              bune căi (drumuri) între noduri este <span style="color: #14B8A6;">algoritmul A*</span>. Acesta este utilizat pe scară
+              largă în multe discipline ale informaticii, în special în <span style="color: #14B8A6;">inteligența artificială</span>.
+            </p>
+          </li>
+          <li>
+            <p>
+              <span style="color: #14B8A6;">Algoritmul A* este o extindere al algoritmului lui Dijkstra</span>, iar singura
+              diferență este că A* folosește <span style="color: #14B8A6;">o funcție euristică</span> pentru a încerca să găsească o
+              cale mai bună, prioritizează nodurile despre care se crede că sunt mai bune decât
+              altele, în timp ce Dijkstra doar explorează toate căile posibile.
+            </p>
+          </li>
+          <li>
+            <p>
+              Algoritmul atribuie fiecărui nod un <span style="color: #14B8A6;">cost estimativ (notație f(n))</span> care este egal
+              cu <span style="color: #14B8A6;">costul drumului până la nodul respectiv (notație g(n))</span> plus
+              <span style="color: #14B8A6;">distanța aproximativă dintre nodul respectiv și nodul destinație (notație h(n))</span>. Distanța
+              aproximativă este găsită cu ajutorul unei funcții euristice ce are ca scop găsirea
+              distanței minime posibile și cu cât această funcție este mai bună, cu atât algoritmul
+              A* va funcționa mai repede și mai eficient. Prin acest algoritm se poate
+              elimina parcurgerea drumurilor mai lungi; dacă există un drum de lungime x
+              între nodul start și nodul destinație, iar distanța minimă între un nod și nodul
+              destinație este mai mare decât x, nodul respectiv nu va fi parcurs.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </p-card>
 </p-card>
+
+

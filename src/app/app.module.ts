@@ -6,16 +6,19 @@ import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login/login.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { TheoryComponent } from './graphs-visualization/components/theory/theory.component';
 
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {PasswordModule} from 'primeng/password';
+import {ToastModule} from 'primeng/toast';
 
 import { HttpClientModule } from  '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SignUpComponent } from './sign-up/sign-up.component';
-import { TheoryComponent } from './graphs-visualization/components/theory/theory.component';
+import { MessageService } from 'primeng/api';
+import { CanActivateMainRouteGuard } from './can-activate-main-route.guard';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, SignUpComponent],
@@ -27,6 +30,7 @@ import { TheoryComponent } from './graphs-visualization/components/theory/theory
     ButtonModule,
     PasswordModule,
     InputTextModule,
+    ToastModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
@@ -41,6 +45,7 @@ import { TheoryComponent } from './graphs-visualization/components/theory/theory
       },
       {
         path: 'graphs-visualization',
+        canActivate: [CanActivateMainRouteGuard],
         loadChildren: () => import('src/app/graphs-visualization/graphs-visualization.module').then(mod => mod.GraphsVisualizationModule)
       },
       {
@@ -49,7 +54,7 @@ import { TheoryComponent } from './graphs-visualization/components/theory/theory
       },
     ])
   ],
-  providers: [],
+  providers: [MessageService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

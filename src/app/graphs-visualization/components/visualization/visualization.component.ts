@@ -121,10 +121,6 @@ export class VisualizationComponent implements OnInit {
     }
   }
 
-  getRandomArbitrary(min : number, max : number) {
-    return Math.random() * (max - min) + min;
-  }
-
   randomIntFromInterval(min : number, max : number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
@@ -402,26 +398,55 @@ export class VisualizationComponent implements OnInit {
         nodeToColor._objects[0].set('fill', '#14B8A6');
         this.previousCanvasNodes.push(nodeToColor);
       });
-      this.canvas.renderAll();
     } else {
       this.previousCanvasNodes.forEach(node => {
         node._objects[0].set('fill', '#D3D3D3');
       });
       this.algorithmFinished = true;
-      this.canvas.renderAll();
       if(this.coloredPath.length) {
         this.coloredPath.forEach(_node => {
           var nodeToColor = this.canvasNodes.find(node => node.id == _node);
           nodeToColor._objects[0].set('fill', '#ffcc00');
-          this.canvas.renderAll();
         })
       }
       this.nodesToAdd = 'Nodurile au fost parcurse';
     }
+    this.canvas.renderAll();
   }
 
   restartVisualization() {
-
+    this.canvas.clear();
+    this.selectedGraphType = '';
+    this.selectedGraphType2 = '';
+    this.finishedGraphDrawing = false;
+    this.algorithmStarted = false;
+    this.reachNextStep = false;
+    this.algorithmFinished = false;
+    this.alertNegativeWeights = false;
+    this.displayNegativeWeightsError = false;
+    this.bfsVisualizationStarted = false;
+    this.dfsVisualizationStarted = false;
+    this.dijkstraVisualizationStarted = false;
+    this.bfVisualizationStarted = false;
+    this.readyToAddLink = false;
+    this.readyToFinishGraph = false;
+    this.nodesAdded = '';
+    this.nodesToAdd = '';
+    this.nodesPath = '';
+    this.nodesNumer = 0;
+    this.nodesArray = [];
+    this.adjacencyList = [[]];
+    this.coloredNodesOrder = [[]];
+    this.canvasLinks = [];
+    this.canvasNodes = [];
+    this.previousCanvasNodes = [];
+    this.coloredPath = [];
+    this.value1 = undefined;
+    this.value2 = undefined ;
+    this.pondere = undefined;
+    this.startNode = undefined;
+    this.finishNode = undefined;
+    this.selectedAlgorithm = {name: '', code: -1};
   }
 }
 

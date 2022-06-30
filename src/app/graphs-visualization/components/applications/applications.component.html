@@ -14,12 +14,17 @@
           <div *ngIf="!algorithmSelected" style="margin-top: 25%;">
             <div class="row pt-2">
               <div class="col-12" style="text-align: center;">
-                <button pButton type="button" (click)="resolveWithA_star()">Rezolvă cu A*</button>
+                <button pButton type="button" (click)="generateLabyrinth()">Generează un labirint</button>
+              </div>
+            </div>
+            <div class="row pt-4">
+              <div class="col-12" style="text-align: center;">
+                <button [disabled]="!labyrinthGenerated" pButton type="button" (click)="resolveWithA_star()">Rezolvă cu A*</button>
               </div>
             </div>
             <div class="row pt-2">
               <div class="col-12" style="text-align: center;">
-                <button pButton type="button" (click)="resolveWithDijkstra()">Rezolvă cu Dijkstra</button>
+                <button [disabled]="!labyrinthGenerated" pButton type="button" (click)="resolveWithDijkstra()">Rezolvă cu Dijkstra</button>
               </div>
             </div>
           </div>

@@ -23,6 +23,7 @@
       </div>
     </form>
     <ng-template pTemplate="footer">
+      <p *ngIf="userNotExisting" style="color: red;">Credențiale incorecte!</p>
       <p><a routerLink="/sign-up">Nu ai cont? Înscrie-te acum!</a></p>
       <p *ngIf="failedLogin"><a routerLink="/sign-up">Ai uitat datele de conectare?</a></p>
     </ng-template>

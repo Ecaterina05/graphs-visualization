@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from './user.model';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class UsersService {
+  public isLoggedIn = new BehaviorSubject<boolean>(true);
+  public username = new BehaviorSubject('');
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -53,6 +55,16 @@ export class UsersService {
       this.usersUpdated.next([...this.users]);
       this.router.navigate(["/"]);
     });
+  }
+
+  getUsername() {
+    if(this.username.getValue()) {
+      localStorage.setItem('username', this.username.getValue());
+    } else {
+      const username = localStorage.getItem('username');
+      this.username.next(username!);
+    }
+    return this.username.getValue();
   }
 }
 

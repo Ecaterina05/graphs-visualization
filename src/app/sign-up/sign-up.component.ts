@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { User } from '../user.model';
+import { Router } from '@angular/router';
 import { UsersService } from '../users.service';
 import { ConfirmedValidator } from './confirm-password-validator';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-sign-up',
@@ -13,24 +12,16 @@ import { ConfirmedValidator } from './confirm-password-validator';
 })
 export class SignUpComponent implements OnInit {
   signInForm!: FormGroup;
-  usersSub: Subscription = new Subscription;
-  users: User[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
     private router: Router,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
     this.buildForm();
-
-    this.usersService.getUsers();
-    this.usersSub = this.usersService.getUserUpdateListener().subscribe( (users: User[]) => {
-        this.users = users;
-        console.log(this.users);
-    });
   }
 
   buildForm() {
@@ -54,7 +45,7 @@ export class SignUpComponent implements OnInit {
     let signInFormData = this.signInForm.getRawValue();
 
     this.usersService.addUser(signInFormData.lastname, signInFormData.firstname, signInFormData.username, signInFormData.email, signInFormData.password);
-
+    this.messageService.add({severity:'success', summary:'Succes', detail:'Datele au fost salvate!'});
   }
 
   onCancel() {

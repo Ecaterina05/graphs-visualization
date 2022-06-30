@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { UsersService } from 'src/app/users.service';
 
 @Component({
   selector: 'app-graphs-visualization',
@@ -7,10 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GraphsVisualizationComponent implements OnInit {
 
+  username!: string;
   selected: string = 'Theory';
-  constructor() { }
+
+  constructor(
+    private usersService: UsersService,
+    private router: Router
+    ) { }
 
   ngOnInit(): void {
+    this.username = this.usersService.getUsername();
   }
 
   goToTheory() {
@@ -26,6 +34,7 @@ export class GraphsVisualizationComponent implements OnInit {
   }
 
   signOut() {
-    
+    this.usersService.isLoggedIn.next(false);
+    this.router.navigate(["/"]);
   }
 }
